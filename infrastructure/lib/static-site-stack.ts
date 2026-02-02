@@ -124,8 +124,8 @@ export class StaticSiteStack extends cdk.Stack {
       },
     });
 
-    // CloudFront Function to redirect www to non-www (for SEO canonical consistency)
-    const wwwRedirectFunction = skipDomain ? undefined : new cloudfront.Function(this, 'WwwRedirectFunction', {
+    // CloudFront Function to handle URL redirects for SEO canonical consistency
+    const urlRedirectFunction = skipDomain ? undefined : new cloudfront.Function(this, 'UrlRedirectFunction', {
       code: cloudfront.FunctionCode.fromInline(`
 function handler(event) {
   var request = event.request;
@@ -143,11 +143,22 @@ function handler(event) {
     };
   }
 
+  // Redirect /index.html to / for canonical URL consistency
+  if (request.uri === '/index.html') {
+    return {
+      statusCode: 301,
+      statusDescription: 'Moved Permanently',
+      headers: {
+        'location': { value: 'https://' + host + '/' }
+      }
+    };
+  }
+
   return request;
 }
       `),
-      functionName: 'cassiecayphoto-www-redirect',
-      comment: 'Redirects www.cassiecayphotography.com to cassiecayphotography.com',
+      functionName: 'cassiecayphoto-url-redirect',
+      comment: 'Redirects www to non-www and /index.html to / for canonical consistency',
     });
 
     // Create CloudFront distribution
@@ -162,10 +173,10 @@ function handler(event) {
         compress: true,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
         responseHeadersPolicy: securityHeadersPolicy,
-        // Attach www redirect function only when domain is configured
-        ...(wwwRedirectFunction ? {
+        // Attach URL redirect function only when domain is configured
+        ...(urlRedirectFunction ? {
           functionAssociations: [{
-            function: wwwRedirectFunction,
+            function: urlRedirectFunction,
             eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
           }],
         } : {}),
