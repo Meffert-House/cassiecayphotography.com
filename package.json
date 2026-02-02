@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/Meffert-House/cassiecayphotography.com#readme",
   "devDependencies": {
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.24",
     "cli-progress": "^3.12.0",
     "cssnano": "^7.1.2",
     "fs-extra": "^11.3.3",
