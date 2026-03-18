@@ -1,5 +1,29 @@
 # Cassie Cay Photography - Project Instructions
 
+Photography portfolio site for Cassie Cay Photography (Cassie Meffert). Single-page static site built with Vite, deployed to AWS S3/CloudFront.
+
+## Commands
+
+```bash
+npm ci                    # Install dependencies (use this, not npm install)
+npm run build             # Build with Vite (outputs to dist/)
+npm run validate:html     # Validate HTML structure
+npm run validate:refs     # Check for broken references
+npm run validate:images   # Check image sizes (non-blocking)
+npm run dev               # Local dev server
+```
+
+There is no test framework. The validation scripts above serve as the test suite. Always run `npm ci && npm run build && npm run validate:html && npm run validate:refs` before opening PRs.
+
+## Key Conventions
+
+- **Conventional commits**: `type(scope): description` (e.g., `fix(gallery): correct lightbox z-index`)
+- **Do NOT modify `infrastructure/`** -- CDK stacks are managed separately
+- **Do NOT modify `images/`** -- image processing is handled by the `process-images.yml` workflow
+- **Image optimization**: New photos go through `process-images.yml` which handles resizing, WebP conversion, and HTML snippet generation
+- **Single-page site**: `index.html` is the main entry point. CSS in `css/`, JS in `js/`
+- **Deployment**: Auto-deploys to AWS via GitHub Actions on push to `main`
+
 ## AWS Configuration
 
 **IMPORTANT:** This is a personal project deployed to a personal AWS account, NOT a Roundhouse business account.

@@ -1,0 +1,100 @@
+name: Auto-merge Claude PRs
+
+on:
+  workflow_run:
+    workflows: [Claude Code Review]
+    types: [completed]
+
+concurrency:
+  group: auto-merge
+  cancel-in-progress: false
+
+jobs:
+  auto-merge:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+      actions: write
+    steps:
+      - name: Find PR from workflow run
+        id: find-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_DATA: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: |
+          # Try pull_requests array from the workflow_run event first
+          pr_number=$(echo "$PR_DATA" | jq -r '.[0].number // empty')
+
+          # Fallback: search by head branch if pull_requests array is empty
+          if [ -z "$pr_number" ]; then
+            head_branch="${{ github.event.workflow_run.head_branch }}"
+            echo "pull_requests array empty, searching by branch: $head_branch"
+            pr_number=$(gh pr list --repo "${{ github.repository }}" \
+              --head "$head_branch" \
+              --state open \
+              --json number \
+              --jq '.[0].number // empty')
+          fi
+
+          if [ -z "$pr_number" ]; then
+            echo "No open PR found for this workflow run"
+            exit 0
+          fi
+
+          echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
+
+      - name: Verify author and merge
+        id: verify-and-merge
+        if: steps.find-pr.outputs.pr_number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.find-pr.outputs.pr_number }}
+        run: |
+          pr_info=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --json title,author,url)
+          pr_title=$(echo "$pr_info" | jq -r '.title')
+          pr_url=$(echo "$pr_info" | jq -r '.url')
+          pr_author=$(echo "$pr_info" | jq -r '.author.login')
+
+          echo "PR #$PR_NUMBER: $pr_title"
+          echo "Author: $pr_author"
+          echo "URL: $pr_url"
+
+          # Only auto-merge PRs from claude[bot]
+          if [ "$pr_author" != "app/claude" ]; then
+            echo "Skipping: author is '$pr_author', not 'app/claude'"
+            exit 0
+          fi
+
+          # Verify all checks passed (exclude auto-merge's own check to avoid race condition)
+          failing=$(gh pr checks "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --json name,bucket --jq '[.[] | select(.bucket != "pass" and .name != "auto-merge")] | length')
+
+          if [ "$failing" != "0" ]; then
+            echo "Skipping: $failing check(s) not passing"
+            gh pr checks "$PR_NUMBER" --repo "${{ github.repository }}" \
+              --json name,bucket --jq '.[] | select(.bucket != "pass") | "\(.name): \(.bucket)"'
+            exit 0
+          fi
+
+          echo "All checks passed, merging..."
+          if merge_output=$(gh pr merge "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --squash --delete-branch 2>&1); then
+            echo "Merged PR #$PR_NUMBER: $pr_title"
+            echo "merged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Merge failed: $merge_output"
+            exit 1
+          fi
+
+      - name: Trigger deploy
+        if: steps.find-pr.outputs.pr_number && steps.verify-and-merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GITHUB_TOKEN merges don't trigger push events, so dispatch Deploy manually
+          gh workflow run "Deploy to AWS" --repo "${{ github.repository }}" --ref main
+          echo "Deploy workflow dispatched"

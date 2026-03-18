@@ -1,50 +1,161 @@
 name: Claude Code
 
 on:
+  issues:
+    types: [opened]
   issue_comment:
     types: [created]
   pull_request_review_comment:
     types: [created]
-  issues:
-    types: [opened, assigned]
   pull_request_review:
     types: [submitted]
 
+# Prevent runaway loops — only one Claude run per issue at a time
+concurrency:
+  group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: false
+
 jobs:
-  claude:
-    if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+  # Auto-trigger on every new issue (Agent Mode — bypasses trigger phrase)
+  auto-issue:
+    if: github.event_name == 'issues'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
-      contents: read
-      pull-requests: read
-      issues: read
+      contents: write
+      pull-requests: write
+      issues: write
       id-token: write
-      actions: read # Required for Claude to read CI results on PRs
+      actions: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 1
 
-      - name: Run Claude Code
-        id: claude
-        uses: anthropics/claude-code-action@v1
+      - name: Add claude label
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue edit ${{ github.event.issue.number }} --add-label "claude"
+
+      - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 50
+            --allowedTools Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash(git:*),Bash(npm:*),Bash(npx:*),Bash(gh:*),Bash(node:*),Bash(cat:*),Bash(ls:*),WebFetch,WebSearch
+          prompt: |
+            REPO: ${{ github.repository }}
+            ISSUE NUMBER: ${{ github.event.issue.number }}
+            ISSUE TITLE: ${{ github.event.issue.title }}
+            ISSUE BODY: ${{ github.event.issue.body }}
 
-          # This is an optional setting that allows Claude to read CI results on PRs
-          additional_permissions: |
-            actions: read
+            Read the issue above and take one of these actions:
 
-          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
-          # prompt: 'Update the pull request description to include a summary of changes.'
+            1. If the issue is clear and actionable, implement a fix on a new
+               branch and open a PR that references the issue.
+            2. If the issue needs clarification, comment on the issue with
+               specific questions.
+            3. If the issue is outside what you can handle (e.g., requires
+               infrastructure changes, hardware access, or external services),
+               comment explaining why and suggest next steps.
 
-          # Optional: Add claude_args to customize behavior and configuration
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr:*)'
+            IMPORTANT CONSTRAINTS:
+            - Do NOT modify anything in the infrastructure/ directory.
+            - Do NOT modify anything in the images/ directory (image processing
+              is handled by a separate pipeline).
+            - Before opening a PR, run: npm ci && npm run build && npm run validate:html && npm run validate:refs
+            - Follow the project's CLAUDE.md conventions.
 
+  # Fix code review feedback from Claude's review bot (up to MAX_ROUNDS)
+  review-fix:
+    if: |
+      github.event_name == 'pull_request_review' &&
+      github.event.review.state != 'approved' &&
+      github.event.review.user.login == 'claude[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    env:
+      MAX_ROUNDS: '3'
+    steps:
+      - name: Check round limit
+        id: round-check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          review_count=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" \
+            --jq '[.[] | select(.user.login == "claude[bot]")] | length')
+          echo "Review count: $review_count (max: $MAX_ROUNDS)"
+          if [ "$review_count" -gt "$MAX_ROUNDS" ]; then
+            echo "exceeded=true" >> "$GITHUB_OUTPUT"
+            gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+              --body "Auto-fix round limit ($MAX_ROUNDS) reached. This PR needs manual review."
+          else
+            echo "exceeded=false" >> "$GITHUB_OUTPUT"
+            echo "round=$review_count" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        if: steps.round-check.outputs.exceeded == 'false'
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        if: steps.round-check.outputs.exceeded == 'false'
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 30
+            --allowedTools Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash(git:*),Bash(npm:*),Bash(npx:*),Bash(gh:*),Bash(node:*),Bash(cat:*),Bash(ls:*),WebFetch,WebSearch
+          prompt: |
+            You are fixing code review feedback on PR #${{ github.event.pull_request.number }}.
+            This is auto-fix round ${{ steps.round-check.outputs.round }} of ${{ env.MAX_ROUNDS }}.
+
+            A code review has been submitted with suggestions. Read the review
+            comments on this PR, address each piece of feedback, commit your
+            fixes, and push to this branch.
+
+            IMPORTANT CONSTRAINTS:
+            - Do NOT modify anything in the infrastructure/ directory.
+            - Do NOT modify anything in the images/ directory.
+            - Before pushing, run: npm ci && npm run build && npm run validate:html && npm run validate:refs
+
+  # Respond to any comment on claude-labeled issues, @claude mentions elsewhere
+  claude-reply:
+    if: |
+      (github.event_name == 'issue_comment' &&
+       !contains(github.event.comment.user.login, '[bot]') &&
+       !contains(github.event.comment.user.login, 'github-actions')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 50
+            --allowedTools Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash(git:*),Bash(npm:*),Bash(npx:*),Bash(gh:*),Bash(node:*),Bash(cat:*),Bash(ls:*),WebFetch,WebSearch
+          label_trigger: "claude"
+          trigger_phrase: "@claude"
