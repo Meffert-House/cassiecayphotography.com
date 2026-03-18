@@ -16,6 +16,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
       checks: read
       actions: write
     steps:
@@ -90,8 +91,26 @@ jobs:
             exit 1
           fi
 
+      - name: Close linked issues
+        if: steps.verify-and-merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.find-pr.outputs.pr_number }}
+        run: |
+          # GITHUB_TOKEN merges don't auto-close linked issues, so close them explicitly
+          issue_numbers=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --json closingIssuesReferences \
+            --jq '.closingIssuesReferences[].number')
+
+          for issue in $issue_numbers; do
+            echo "Closing linked issue #$issue"
+            gh issue close "$issue" --repo "${{ github.repository }}" \
+              --reason completed \
+              --comment "Closed by merge of #$PR_NUMBER"
+          done
+
       - name: Trigger deploy
-        if: steps.find-pr.outputs.pr_number && steps.verify-and-merge.outputs.merged == 'true'
+        if: steps.verify-and-merge.outputs.merged == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
