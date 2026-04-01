@@ -32,18 +32,18 @@
   "devDependencies": {
     "autoprefixer": "^10.4.27",
     "cli-progress": "^3.12.0",
-    "cssnano": "^7.1.3",
+    "cssnano": "^7.1.4",
     "fs-extra": "^11.3.4",
     "glob": "^13.0.6",
-    "html-validate": "^10.11.1",
+    "html-validate": "^10.11.2",
     "husky": "^9.1.7",
     "node-html-parser": "^7.1.0",
     "p-limit": "^7.3.0",
     "postcss": "^8.5.8",
     "sharp": "^0.34.5",
     "sitemap": "^9.0.1",
-    "vite": "^7.3.1",
-    "vite-plugin-static-copy": "^3.2.0"
+    "vite": "^8.0.3",
+    "vite-plugin-static-copy": "^4.0.0"
   },
   "dependencies": {
     "embla-carousel": "^8.6.0",
