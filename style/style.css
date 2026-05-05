@@ -1016,19 +1016,22 @@ img.octagon {
     font-size: 15px;
     font-weight: 700;
     letter-spacing: -0.5px;
-    color: #404040;
+    color: #404040 !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease-in-out;
 }
 .offcanvas-body .nav-link:hover,
 .offcanvas-body .nav-link.active {
-    color: #4c86e5;
+    color: #4c86e5 !important;
     background-color: rgba(76, 134, 229, 0.05);
 }
 .offcanvas .btn-close {
     width: 1em;
     height: 1em;
     padding: 0.5rem;
+}
+.hamburger.animate.active {
+    visibility: hidden;
 }
 /*-----------------------------------------------------------------------------------*/
 /*	07. BUTTON
