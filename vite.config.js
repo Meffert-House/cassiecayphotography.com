@@ -1,6 +1,32 @@
 import { defineConfig } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { resolve } from 'path'
+import { createHash } from 'crypto'
+import { readFileSync } from 'fs'
+
+const HASHED_SCRIPTS = [
+  'style/js/custom-plugins.js',
+  'style/js/custom-scripts.js',
+]
+
+function cacheBustStaticScripts() {
+  return {
+    name: 'cache-bust-static-scripts',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        for (const src of HASHED_SCRIPTS) {
+          const content = readFileSync(resolve(__dirname, src))
+          const hash = createHash('md5').update(content).digest('hex').slice(0, 8)
+          const escaped = src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          const pattern = new RegExp(`(<script[^>]*\\bsrc=")(${escaped})(")`)
+          html = html.replace(pattern, `$1$2?v=${hash}$3`)
+        }
+        return html
+      },
+    },
+  }
+}
 
 export default defineConfig({
   root: '.',
@@ -34,6 +60,7 @@ export default defineConfig({
   },
 
   plugins: [
+    cacheBustStaticScripts(),
     viteStaticCopy({
       targets: [
         // Copy vendor JS files that should not be bundled
