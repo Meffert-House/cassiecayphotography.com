@@ -1,4 +1,16 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(awk *)",
+      "Bash(npm ci)",
+      "Bash(npm run build)",
+      "Bash(npm run validate:html)",
+      "Bash(npm run validate:images)",
+      "Bash(npm run validate:refs)",
+      "mcp__github__get_commit",
+      "mcp__github__pull_request_read"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
