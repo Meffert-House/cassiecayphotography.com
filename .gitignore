@@ -7,6 +7,12 @@
 !.claude/hooks/
 !.claude/settings.json
 
+# Kiro CLI compatibility symlink to CLAUDE.md (dev-local)
+KIRO.md
+
+# Per-project MCP config (server list configured per-machine)
+.mcp.json
+
 # CDK
 infrastructure/cdk.out/
 infrastructure/*.js
@@ -25,3 +31,4 @@ dist/
 # Logs
 *.log
 .playwright-mcp/
+.playwright-cli/
