@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-13T00:00:00Z",
+  "title": "Design System: Cassie Cay Photography",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Madison Lakeshore",
+        "canonical": "oklch(78% 0.043 213)",
+        "tonalRamp": ["#182a32", "#28414c", "#3f5b6a", "#587587", "#7591a3", "#94b6c2", "#b5d3da", "#e5eff1"]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Lakeshore at Dusk",
+        "canonical": "oklch(70% 0.047 213)",
+        "tonalRamp": ["#182a32", "#28414c", "#3f5b6a", "#557180", "#6f8a99", "#84acb6", "#a8c8d0", "#dde9ec"]
+      },
+      "primary-pale": {
+        "role": "primary",
+        "displayName": "First Light",
+        "canonical": "oklch(95% 0.012 213)",
+        "tonalRamp": ["#182a32", "#28414c", "#3f5b6a", "#587587", "#7591a3", "#b5d3da", "#dbe9ed", "#e5eff1"]
+      },
+      "primary-deep": {
+        "role": "primary",
+        "displayName": "Lake at Twilight",
+        "canonical": "oklch(50% 0.054 213)",
+        "tonalRamp": ["#0f1a1e", "#1c2f37", "#294551", "#38606e", "#4a7783", "#5e8b97", "#82a4b3", "#c9dadf"]
+      },
+      "primary-deep-hover": {
+        "role": "primary",
+        "displayName": "Lake at Midnight",
+        "canonical": "oklch(42% 0.055 213)",
+        "tonalRamp": ["#0a1216", "#15252b", "#213943", "#3a606a", "#527c87", "#6f97a3", "#a0bdc6", "#d4e1e5"]
+      },
+      "ink-heading": {
+        "role": "neutral",
+        "displayName": "Caption Ink",
+        "canonical": "oklch(31% 0 0)",
+        "tonalRamp": ["#111111", "#1a1a1a", "#262626", "#404040", "#595959", "#737373", "#bfbfbf", "#f2f2f2"]
+      },
+      "ink-body": {
+        "role": "neutral",
+        "displayName": "Soft Slate",
+        "canonical": "oklch(43% 0 0)",
+        "tonalRamp": ["#111111", "#1a1a1a", "#262626", "#404040", "#606060", "#888888", "#bfbfbf", "#f2f2f2"]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Pencil Note",
+        "canonical": "oklch(60% 0 0)",
+        "tonalRamp": ["#111111", "#262626", "#404040", "#606060", "#888888", "#a6a6a6", "#bfbfbf", "#f2f2f2"]
+      },
+      "surface-bright": {
+        "role": "neutral",
+        "displayName": "Linen Page",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": ["#262626", "#404040", "#606060", "#888888", "#bfbfbf", "#e0e0e0", "#f2f2f2", "#ffffff"]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Album Cover",
+        "canonical": "oklch(13% 0 0)",
+        "tonalRamp": ["#111111", "#151515", "#181818", "#262626", "#404040", "#606060", "#bfbfbf", "#f2f2f2"]
+      },
+      "surface-darker": {
+        "role": "neutral",
+        "displayName": "Cloth Binding",
+        "canonical": "oklch(11% 0 0)",
+        "tonalRamp": ["#0a0a0a", "#111111", "#151515", "#1f1f1f", "#404040", "#606060", "#bfbfbf", "#f2f2f2"]
+      },
+      "surface-darkest": {
+        "role": "neutral",
+        "displayName": "Inner Spine",
+        "canonical": "oklch(9% 0 0)",
+        "tonalRamp": ["#050505", "#0a0a0a", "#111111", "#1a1a1a", "#404040", "#606060", "#bfbfbf", "#f2f2f2"]
+      }
+    },
+    "typographyMeta": {
+      "hero": {
+        "displayName": "Hero Wordmark",
+        "purpose": "Liebe Gerda italic, reserved for 'Cassie Cay Photography' on the hero. Never reused elsewhere."
+      },
+      "display": {
+        "displayName": "Section Title",
+        "purpose": "Montserrat 700 28px for section titles like 'A Little About Me' and 'Featured Photos'."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Montserrat 700 26px h1 fallback when not the section title."
+      },
+      "title": {
+        "displayName": "Title / Nav",
+        "purpose": "Montserrat 700 18px for smaller titles, section-title-upper, and navbar nav-link."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Muli 400 16px for paragraphs and default reading text. Line length capped at 65 to 75 characters."
+      },
+      "label": {
+        "displayName": "Label / Chrome",
+        "purpose": "Montserrat 700 13px, often uppercase. Buttons, filter pills, hero tagline, all chrome that signals 'interactive'."
+      }
+    },
+    "shadows": [
+      {
+        "name": "navbar-hairline",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.1)",
+        "purpose": "The only shadow in the system. Appears on the navbar when scrolled past the hero so the navbar stays legible against content beneath it."
+      }
+    ],
+    "motion": [
+      {
+        "name": "link-transition",
+        "value": "150ms ease-in-out",
+        "purpose": "Default link and state transition. Buttons, nav-links, hover states."
+      },
+      {
+        "name": "filter-transition",
+        "value": "200ms ease-in-out",
+        "purpose": "Filter pill color shift on hover and active state."
+      },
+      {
+        "name": "portfolio-shuffle",
+        "value": "300ms ease",
+        "purpose": "Muuri portfolio item opacity and transform when the category filter reorders the grid."
+      },
+      {
+        "name": "navbar-brand-shift",
+        "value": "300ms ease",
+        "purpose": "Navbar brand image size transition when the navbar moves from transparent to solid on scroll."
+      },
+      {
+        "name": "hero-fade",
+        "value": "800ms ease-in-out",
+        "purpose": "Embla hero slider opacity crossfade between slides. The slowest motion in the system, by design."
+      }
+    ],
+    "breakpoints": [
+      {"name": "xs", "value": "320px"},
+      {"name": "sm", "value": "575px"},
+      {"name": "md", "value": "768px"},
+      {"name": "lg", "value": "1024px"},
+      {"name": "xl", "value": "1440px"}
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Square-cornered, Madison Lakeshore fill, uppercase Montserrat label. The only button shape allowed.",
+      "html": "<button class=\"ds-btn-primary\">Send Message</button>",
+      "css": ".ds-btn-primary { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; line-height: 1; text-transform: uppercase; letter-spacing: 0; color: #ffffff; background: #4a7783; border: 0; border-radius: 0; padding: 17px 25px; cursor: pointer; transition: background 150ms ease-in-out; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: #3a606a; outline: none; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Transparent fill with Madison Lakeshore 2px border. Fills with the accent on hover.",
+      "html": "<button class=\"ds-btn-ghost\">View Portfolio</button>",
+      "css": ".ds-btn-ghost { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; line-height: 1; text-transform: uppercase; letter-spacing: 0; color: #98bec8; background: transparent; border: 2px solid #98bec8; border-radius: 0; padding: 15px 23px; cursor: pointer; transition: background 150ms ease-in-out, color 150ms ease-in-out; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { background: #98bec8; color: #ffffff; outline: none; }"
+    },
+    {
+      "name": "Filter Pill Group",
+      "kind": "chip",
+      "refersTo": "filter-pill",
+      "description": "Portfolio category filter. Montserrat uppercase labels separated by 3px circular dots. Active state in Madison Lakeshore.",
+      "html": "<div class=\"ds-filter-group\"><button class=\"ds-filter-pill ds-filter-pill--active\">All</button><button class=\"ds-filter-pill\">Family</button><button class=\"ds-filter-pill\">Newborn</button><button class=\"ds-filter-pill\">Senior</button></div>",
+      "css": ".ds-filter-group { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0; } .ds-filter-pill { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; line-height: 1; text-transform: uppercase; color: #888888; background: none; border: none; padding: 0; margin: 0 20px 10px 0; cursor: pointer; transition: color 200ms ease-in-out; } .ds-filter-pill:hover, .ds-filter-pill--active { color: #98bec8; } .ds-filter-pill::after { content: ''; display: inline-block; vertical-align: 3px; margin-left: 17px; width: 3px; height: 3px; border-radius: 50%; background-color: rgba(21, 21, 21, 0.25); } .ds-filter-pill:last-child::after { display: none; }"
+    },
+    {
+      "name": "Section Title",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "Centered Montserrat 28px section heading. The decorative line variant (section-title-line) is omitted here; the simpler form is the default.",
+      "html": "<h2 class=\"ds-section-title\">A Little About Me</h2>",
+      "css": ".ds-section-title { font-family: 'Montserrat', sans-serif; font-size: 28px; line-height: 38px; font-weight: 700; letter-spacing: -0.5px; color: #404040; text-align: center; margin: 0 0 20px; }"
+    },
+    {
+      "name": "Hero Overlay",
+      "kind": "custom",
+      "refersTo": "navbar-over-hero",
+      "description": "The signature right-anchored hero overlay. Liebe Gerda italic wordmark over an uppercase Montserrat tagline. Photograph stand-in here is a Madison Lakeshore gradient.",
+      "html": "<div class=\"ds-hero\"><div class=\"ds-hero-overlay\"><span class=\"ds-hero-title\">Cassie Cay Photography</span><span class=\"ds-hero-tagline\">Madison, Wisconsin Portrait Photographer</span></div></div>",
+      "css": ".ds-hero { position: relative; min-height: 260px; width: 100%; background: linear-gradient(135deg, #98bec8 0%, #84acb6 100%); overflow: hidden; } .ds-hero-overlay { position: absolute; top: 50%; right: 40px; transform: translateY(-50%); text-align: right; color: #ffffff; pointer-events: none; } .ds-hero-title { display: block; font-family: 'liebegerda', Georgia, serif; font-style: italic; font-size: 50px; font-weight: 700; line-height: 1; margin-bottom: 10px; } .ds-hero-tagline { display: block; font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 3px; }"
+    },
+    {
+      "name": "Portfolio Item",
+      "kind": "card",
+      "refersTo": "custom",
+      "description": "A figure wrapping a photograph that opens GLightbox. No card body, no border, no shadow. The photograph is the card. Hover applies a subtle 20% dim overlay.",
+      "html": "<figure class=\"ds-portfolio-item\"><a href=\"#\" class=\"ds-portfolio-link\"><div class=\"ds-portfolio-placeholder\"><span>portrait</span></div><div class=\"ds-portfolio-overlay\"></div></a></figure>",
+      "css": ".ds-portfolio-item { position: relative; margin: 0; display: block; width: 240px; aspect-ratio: 3 / 4; overflow: hidden; } .ds-portfolio-link { display: block; position: relative; width: 100%; height: 100%; cursor: pointer; text-decoration: none; } .ds-portfolio-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #98bec8, #84acb6); display: flex; align-items: center; justify-content: center; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; } .ds-portfolio-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0); transition: background 200ms ease-in-out; pointer-events: none; } .ds-portfolio-link:hover .ds-portfolio-overlay { background: rgba(0, 0, 0, 0.2); }"
+    },
+    {
+      "name": "Navbar (Scrolled State)",
+      "kind": "nav",
+      "refersTo": "navbar-scrolled",
+      "description": "Navbar in its solid state once the page has scrolled past the hero. Linen Page background, Caption Ink text, hairline shadow underneath. Madison Lakeshore on hover or active link.",
+      "html": "<nav class=\"ds-nav\"><div class=\"ds-nav-brand\">Cassie Cay</div><ul class=\"ds-nav-list\"><li><a href=\"#\" class=\"ds-nav-link ds-nav-link--active\">Home</a></li><li><a href=\"#\" class=\"ds-nav-link\">About</a></li><li><a href=\"#\" class=\"ds-nav-link\">Portfolio</a></li><li><a href=\"#\" class=\"ds-nav-link\">Contact</a></li></ul></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 30px; background: #ffffff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); height: 72px; } .ds-nav-brand { font-family: 'liebegerda', Georgia, serif; font-style: italic; font-weight: 700; font-size: 22px; color: #404040; } .ds-nav-list { display: flex; gap: 0; margin: 0; padding: 0; list-style: none; } .ds-nav-list li { padding: 0; margin: 0; } .ds-nav-link { display: block; padding: 13px 20px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; line-height: 1; text-transform: uppercase; letter-spacing: 0; color: #404040; text-decoration: none; transition: color 150ms ease-in-out; } .ds-nav-link:hover, .ds-nav-link--active { color: #98bec8; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Saturday Morning Album",
+    "overview": "The site reads like a family photo album on a Saturday morning. Slow, considered, light-filled. A stranger's handwriting in the captions. Pages that turn one at a time. The photographs were taken by someone who knows you. The album was bound by someone who cares. Nothing on the page is in a hurry, nothing is selling you a package, nothing reads as commodity. The system rejects two specific failure modes named in PRODUCT.md: the Squarespace-template photographer aesthetic (Brine, Foster, Wells, and their imitators), and the bargain or chain studio aesthetic (Walmart, JCPenney, Olan Mills). Both fail for the same reason: anonymity. The strongest counter-design move on this site is unmistakable personhood. Visually the system is quiet: pure Linen Page and Album Cover surfaces, a single accent in Madison Lakeshore seafoam, three fonts with three jobs.",
+    "keyCharacteristics": [
+      "Album metaphor: page-by-page, considered, intimate, sentimental without saccharine",
+      "One accent (Madison Lakeshore #98bec8); no secondary or tertiary color roles",
+      "Three-font system: Liebe Gerda (hero wordmark only), Montserrat (chrome), Muli (body)",
+      "Flat by default; depth comes from photographs, not chrome",
+      "Quiet utility: UI is the frame, photos are the picture",
+      "Local-not-generic: Madison and Waunakee, not 'any photographer in any city'"
+    ],
+    "rules": [
+      {"name": "The One-Accent Rule", "body": "The Madison Lakeshore hue family is the only accent family on the site. No second color joins. No gradient, no co-accent for variety, no hover blue that diverges from the brand hue. State and contrast variation happen within the family (#98bec8 to #84acb6 to #4a7783 to #3a606a), never by introducing a new hue.", "section": "colors"},
+      {"name": "The Contrast-Locked Accent Rule", "body": "Madison Lakeshore (#98bec8) is the surface presence of the brand, but its lightness fails WCAG AA on white text and on white as text. For chrome that requires text contrast (button fills, focus indicators, body-text link color on light backgrounds), reach for Lake at Twilight (#4a7783), which clears 4.86:1 on white. The bright accent stays decorative; the deep accent does the readable work. Two shades of one accent, never two accents.", "section": "colors"},
+      {"name": "The Photograph-Is-Not-A-Surface Rule", "body": "Madison Lakeshore never overlays a photograph. It does not tint a hero image, never bleeds over a portrait, never appears as a duotone treatment. The seafoam belongs to chrome; the photographs belong to themselves.", "section": "colors"},
+      {"name": "The Album-Page Rule", "body": "Linen Page is paper. Album Cover is binding. They alternate by section, never blend. There is no soft-grey intermediate surface; sections are either bright or dark.", "section": "colors"},
+      {"name": "The Three-Font Rule", "body": "The system uses exactly three fonts: Liebe Gerda for the hero wordmark, Montserrat for all chrome, and Muli for body reading text. No fourth font joins.", "section": "typography"},
+      {"name": "The Wordmark-Only Rule", "body": "Liebe Gerda italic is reserved for the 'Cassie Cay Photography' hero wordmark. It does not appear in section titles, pull-quotes, taglines, or any other ornament.", "section": "typography"},
+      {"name": "The Uppercase Chrome Rule", "body": "Buttons, filter pills, the hero tagline, and the navbar use uppercase Montserrat. Body copy, headings, and lead paragraphs are sentence case. Uppercase and sentence case never mix in the same component.", "section": "typography"},
+      {"name": "The Photograph-Carries-The-Z-Axis Rule", "body": "Depth comes from the photograph, not the UI. Buttons sit flat. Cards sit flat. The only allowed shadow is the navbar hairline on scroll. If a designer reaches for a card shadow, the right answer is almost always 'use a bigger photograph instead'.", "section": "elevation"},
+      {"name": "The No-Glassmorphism Rule", "body": "Backdrop-filter blur is forbidden on cards, modals, overlays, and the navbar. The album does not have a glass page.", "section": "elevation"},
+      {"name": "The One-Action Rule", "body": "Each section has at most one button. Contact has 'Send Message'. About has no button. Portfolio has no button. The hero has no button. Buttons appear only where action is genuinely required.", "section": "components"},
+      {"name": "The Square-Button Rule", "body": "Buttons are square (radius 0). The .btn-rounded and .btn-full-rounded theme variants are forbidden. Square reads as honest, photographic, and album-page-edge.", "section": "components"},
+      {"name": "The Hero-Stays-Right Rule", "body": "The hero overlay is right-anchored at 40px from the right edge. It does not migrate to center, to bottom, to left, or to a card with a backdrop blur. The right-anchored position is the distinctive identity gesture of this site.", "section": "components"}
+    ],
+    "dos": [
+      "Do keep the Madison Lakeshore hue family as the only accent family. Madison Lakeshore (#98bec8) is the decorative surface (links, borders, decorative hover, active filter pills, form-input focus border). Lake at Twilight (#4a7783) is the contrast-safe text-bearing variant (button fills, white-on-color chrome). Same hue, two jobs.",
+      "Do let photographs carry the page. Crop wide. Place them on Linen Page or against Album Cover dark wrappers. Give them whole-screen moments.",
+      "Do reserve Liebe Gerda italic for the 'Cassie Cay Photography' wordmark on the hero. Nowhere else.",
+      "Do use Montserrat 700 uppercase for chrome that needs label-like presence: nav, buttons, section titles, filter pills, hero tagline.",
+      "Do use Muli for everything readable: paragraphs, captions, list items.",
+      "Do honor prefers-reduced-motion: the hero slider stops crossfading and serves a static image; GLightbox transitions become instant.",
+      "Do write subject-specific alt text on every photograph. 'Tender mother kisses sleeping newborn baby with coral bow in bright Madison Wisconsin portrait session' beats 'image' every time.",
+      "Do keep the navbar transparent over the hero and let it transition to solid Linen Page with the hairline shadow on scroll.",
+      "Do keep the hero overlay anchored to the right edge of the photograph at 40px (15px on mobile). It is a signature."
+    ],
+    "donts": [
+      "Don't use the Squarespace-template photographer aesthetic (Brine, Foster, Wells templates). No serif-logo-over-hero-photo, no three-column services grid with stock icons, no Instagram embed footer.",
+      "Don't use the bargain or chain studio aesthetic. No watermarked thumbnails, no 'package pricing' tables, no JCPenney-mall posing language, no heavy-retouch skin softening, no fake fabric backdrops.",
+      "Don't introduce gradient text (background-clip text over a gradient background). Single solid color always.",
+      "Don't introduce side-stripe borders (border-left or border-right greater than 1px as colored accents).",
+      "Don't introduce glassmorphism. No backdrop-filter blur on cards, modals, overlays, or the navbar.",
+      "Don't introduce a hero video loop. The embla still-image crossfade is the entire hero motion vocabulary.",
+      "Don't introduce parallax-fade hero copy. The hero overlay is static and right-anchored.",
+      "Don't introduce scripty wedding-blog typography in section titles, decorative quotes, or chrome. Liebe Gerda stays on the wordmark.",
+      "Don't introduce a fourth font.",
+      "Don't add a button to a section that doesn't need one. Trust is built quietly; the site is a credibility layer.",
+      "Don't introduce a card shadow, portfolio-thumbnail shadow, hover-lift transform, or any elevation beyond the single Navbar Hairline.",
+      "Don't introduce hero metric templates (big number, small label, supporting stats). This is a photography portfolio, not a SaaS landing page.",
+      "Don't introduce identical service-card grids (icon + heading + body, repeated)."
+    ]
+  }
+}

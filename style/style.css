@@ -1003,15 +1003,16 @@ img.octagon {
     padding: 0.8rem 1.5rem;
     font-size: 15px;
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: 0;
+    text-transform: uppercase;
     color: #404040;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease-in-out;
 }
 .offcanvas-body .nav-link:hover,
 .offcanvas-body .nav-link.active {
-    color: #4c86e5;
-    background-color: rgba(76, 134, 229, 0.05);
+    color: #98bec8;
+    background-color: rgba(152, 190, 200, 0.08);
 }
 .offcanvas .btn-close {
     width: 1em;

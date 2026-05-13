@@ -30,13 +30,13 @@ a:focus {
     color: #98bec8;
 }
 .btn {
-    background: #98bec8;
+    background: #4a7783;
 }
 .btn:hover,
 .btn:focus,
 .btn:active,
 .btn.active {
-    background: #84acb6;
+    background: #3a606a;
 }
 .btn.btn-border {
     border: 2px solid #98bec8;
