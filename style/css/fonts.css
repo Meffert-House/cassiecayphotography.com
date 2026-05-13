@@ -1,0 +1,37 @@
+/*-----------------------------------------------------------------------------------*/
+/*  FONT FACES — Montserrat (locally hosted, weights 400/500/700 per DESIGN.md §3)
+/*  Extracted from the former icons.css so we ship only the weights we actually use.
+/*  WOFF2 only: covers ~98% of browsers; .browserslistrc targets modern Chrome/Safari.
+/*-----------------------------------------------------------------------------------*/
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../type/montserrat/Montserrat-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../type/montserrat/Montserrat-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../type/montserrat/Montserrat-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../type/montserrat/Montserrat-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}

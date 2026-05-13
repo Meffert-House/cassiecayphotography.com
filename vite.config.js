@@ -104,10 +104,12 @@ export default defineConfig({
           src: 'style/style.css',
           dest: 'style'
         },
-        {
-          src: 'style/type',
-          dest: 'style'
-        },
+        // style/type/ removed from static-copy 2026-05: icon fonts (Slimicons,
+        // FontAwesome, elemis, lg) are no longer used (replaced with inline SVG),
+        // and Vite bundles the 4 needed Montserrat WOFF2 files into dist/assets/
+        // via style/css/fonts.css. The remaining static-copy of style/type/ would
+        // have shipped ~7.4MB of dead icon-font binaries to S3.
+
         // Copy images directory (original - safety during migration)
         {
           src: 'images',

@@ -232,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var grid = null;
 
     if (portfolioGrid) {
-        // Remove lazy loading from portfolio images before Muuri init
-        // to ensure accurate dimensions for masonry layout
-        portfolioGrid.querySelectorAll('img[loading="lazy"]').forEach(function(img) {
-            img.removeAttribute('loading');
-        });
+        // Portfolio imgs now carry intrinsic width/height attrs, so Muuri can
+        // size cells from the aspect-ratio hint before image bytes arrive.
+        // That means we can KEEP loading="lazy" on every gallery image and let
+        // the browser eager-load only what enters the viewport. LCP win is
+        // substantial on mobile (was ~76 images eager; now ~8-12 above-fold).
 
         // Initialize Muuri grid — honors prefers-reduced-motion
         grid = new Muuri('#portfolio-grid', {
@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create scroll-to-top button element
         var scrollUpBtn = document.createElement('div');
         scrollUpBtn.id = 'scrollUp';
-        scrollUpBtn.innerHTML = '<a href="#" class="btn btn-circle btn-dark"><i class="fa fa-arrow-up"></i></a>';
+        scrollUpBtn.innerHTML = '<a href="#" class="btn btn-circle btn-dark" aria-label="Scroll to top"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg></a>';
 
         // Set initial hidden state (positioning handled by CSS)
         scrollUpBtn.style.opacity = '0';
