@@ -1016,13 +1016,13 @@ img.octagon {
     font-size: 15px;
     font-weight: 700;
     letter-spacing: -0.5px;
-    color: #404040 !important;
+    color: #404040;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease-in-out;
 }
 .offcanvas-body .nav-link:hover,
 .offcanvas-body .nav-link.active {
-    color: #4c86e5 !important;
+    color: #4c86e5;
     background-color: rgba(76, 134, 229, 0.05);
 }
 .offcanvas .btn-close {
@@ -5830,7 +5830,7 @@ list-blue i {
         padding-top: 19px;
         padding-bottom: 18px;
     }
-    .navbar-nav .nav-link {
+    .navbar-collapse .navbar-nav .nav-link {
         font-size: 14px;
         padding-left: 30px;
         padding-right: 30px;
@@ -5866,9 +5866,9 @@ list-blue i {
     .navbar .social-mute a:hover i {
         color: rgba(255, 255, 255, 0.75) !important;
     }
-    .navbar-nav .nav-link:hover,
-    .navbar-nav .nav-link.highlighted,
-    .navbar-nav .nav-link.active {
+    .navbar-collapse .navbar-nav .nav-link:hover,
+    .navbar-collapse .navbar-nav .nav-link.highlighted,
+    .navbar-collapse .navbar-nav .nav-link.active {
         color: rgba(255, 255, 255, 0.75) !important;
     }
     .navbar .navbar-header {
