@@ -4,6 +4,8 @@
 # Claude Code (allow commands/ for shared skills)
 .claude/*
 !.claude/commands/
+!.claude/hooks/
+!.claude/settings.json
 
 # CDK
 infrastructure/cdk.out/
