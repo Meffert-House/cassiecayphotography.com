@@ -462,18 +462,6 @@ hr.double {
 .divider-icon:after {
     right: 0;
 }
-.close {
-    text-shadow: none;
-}
-.alert button {
-    -webkit-transition: all 150ms ease-in-out;
-    -o-transition: all 150ms ease-in-out;
-    transition: all 150ms ease-in-out;
-    cursor: pointer
-}
-.alert-dismissible .close {
-    padding: 11px 18px 10px;
-}
 .badge {
     text-transform: uppercase;
     font-size: 11px;
@@ -911,8 +899,8 @@ img.octagon {
 /*-----------------------------------------------------------------------------------*/
 /*	05. MEGA MENU
 /*-----------------------------------------------------------------------------------*/
-.navbar-nav,
-.navbar-nav>li.mega-menu {
+.navbar .navbar-nav,
+.navbar .navbar-nav>li.mega-menu {
     position: static !important;
 }
 .navbar-nav>li>ul.mega-menu {
@@ -5749,7 +5737,7 @@ list-blue i {
     .navbar-nav>li>.dropdown-menu {
         border-top: 2px solid #4c86e5;
     }
-    .navbar.center .ml-auto {
+    .navbar.center .ms-auto {
         float: right;
     }
     .navbar.center .navbar-brand {
@@ -5890,7 +5878,7 @@ list-blue i {
         margin: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .navbar:not(.center) .navbar-nav:not(.ml-auto)>li:first-child {
+    .navbar:not(.center) .navbar-nav:not(.ms-auto)>li:first-child {
         border: 0;
     }
     .navbar .navbar-nav.sm-collapsible>li:first-child {
