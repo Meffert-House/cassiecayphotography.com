@@ -88,10 +88,14 @@ document.addEventListener('DOMContentLoaded', function() {
         sentinel.style.cssText = 'position:absolute;top:350px;height:1px;width:100%;pointer-events:none;';
         document.body.insertBefore(sentinel, document.body.firstChild);
 
-        // Clone navbar for sticky version
+        // Clone navbar for sticky version. DESIGN.md §5 specifies the scrolled
+        // state is light theme (Linen Page background + Caption Ink text + hairline
+        // shadow), so the cloned navbar swaps inverse-text/nav-wrapper-dark for
+        // nav-wrapper-light. Without this, the clone inherits the hero's inverse
+        // styling and renders white-on-white once it sticks.
         var clone = navbar.cloneNode(true);
-        clone.classList.add('banner--clone', 'fixed');
-        clone.classList.remove('absolute');
+        clone.classList.add('banner--clone', 'fixed', 'nav-wrapper-light');
+        clone.classList.remove('absolute', 'nav-wrapper-dark', 'inverse-text');
         document.body.insertBefore(clone, document.body.firstChild);
 
         // Update cloned hamburger to target the shared offcanvas (not a clone)

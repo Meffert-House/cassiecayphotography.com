@@ -4296,9 +4296,6 @@ pre {
 .image-wrapper:not(.box-shadow):not(*:root) {
     -webkit-transform: translateZ(0)	
 }
-.image-wrapper:not(.mobile) {
-    background-attachment: fixed !important
-}
 .image-wrapper:before {
     content: "";
     display: block;
@@ -5695,6 +5692,19 @@ list-blue i {
 /* Offset for fixed header on anchor targets */
 section[id] {
     scroll-margin-top: 68px;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*	ABOUT BIO MEASURE (DESIGN.md §3 — cap body line length at 65-75ch)
+/*-----------------------------------------------------------------------------------*/
+#about .col-lg-7 .lead,
+#about .col-lg-7 p {
+    max-width: 65ch;
+}
+#about .col-lg-7.text-md-center .lead,
+#about .col-lg-7.text-md-center p {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /*-----------------------------------------------------------------------------------*/

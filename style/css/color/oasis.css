@@ -11,12 +11,12 @@ a.hover:hover {
     border-bottom: 1px solid #98bec8;
 }
 a {
-    color: #98bec8;
+    color: #4a7783;
 }
 a:hover,
 a:focus {
     text-decoration: none;
-    color: #98bec8;
+    color: #4a7783;
 }
 .color-wrapper {
     background: #98bec8;
@@ -24,10 +24,10 @@ a:focus {
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link.active,
 .navbar-nav .nav-link.highlighted {
-    color: #98bec8;
+    color: #4a7783;
 }
 .navbar .social-mute a:hover i {
-    color: #98bec8;
+    color: #4a7783;
 }
 .btn {
     background: #4a7783;
@@ -40,7 +40,7 @@ a:focus {
 }
 .btn.btn-border {
     border: 2px solid #98bec8;
-    color: #98bec8;
+    color: #4a7783;
 }
 .btn.btn-border:hover,
 .btn.btn-border:focus,
@@ -52,10 +52,10 @@ a:focus {
 }
 .btn-group .dropdown-menu>li>a:hover,
 .btn-group .dropdown-menu>li>a:focus {
-    color: #98bec8;
+    color: #4a7783;
 }
 .image-list li a:hover {
-    color: #98bec8
+    color: #4a7783
 }
 .list-group-item.active {
     background-color: #98bec8;
@@ -63,7 +63,7 @@ a:focus {
 }
 .cbp-filter-item.cbp-filter-item-active,
 .cbp-filter-item:hover {
-    color: #98bec8;
+    color: #4a7783;
 }
 .swiper-container-wrapper .swiper-pagination .swiper-pagination-bullet:hover,
 .swiper-container-wrapper .swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active {
@@ -72,43 +72,43 @@ a:focus {
 .post-title a:hover,
 .more:hover,
 .meta a:hover {
-    color: #98bec8;
+    color: #4a7783;
 }
 .post-nav-wrapper a:hover {
-    color: #98bec8;
+    color: #4a7783;
 }
 .sidebox a:not(.btn):hover {
-    color: #98bec8
+    color: #4a7783
 }
 #comments .info h6 a:hover {
-    color: #98bec8;
+    color: #4a7783;
 }
 .social-mute a:hover i {
-    color: #98bec8;
+    color: #4a7783;
 }
 .inverse-text .social-mute a:hover i {
     color: rgba(255, 255, 255, 0.75) !important;
 }
 .icon-color {
-    color: #98bec8
+    color: #4a7783
 }
 .box.box-border:hover,
 .box.box-border:hover:before {
     border-color: #98bec8
 }
 .overlay.caption-dark .meta a:hover {
-    color: #98bec8 !important;
+    color: #4a7783 !important;
 }
 .accordion-wrapper.lined .card-header a,
 .accordion-wrapper.lined .card-header a:hover,
 .accordion-wrapper.lined .card-header a.collapsed:hover {
-    color: #98bec8;
+    color: #4a7783;
     border-color: #98bec8;
 }
 .nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-item .nav-link:hover,
 .nav-tabs .nav-item .nav-link.active {
-    color: #98bec8;
+    color: #4a7783;
     border-color: #98bec8 !important;
 }
 .tooltip-inner {
@@ -155,28 +155,28 @@ input[type="color"]:focus,
     background-color: #98bec8
 }
 .ratings:after {
-    color: #98bec8;
+    color: #4a7783;
 }
 .pagination ul>li>a:hover,
 .pagination ul>.active>a {
-    color: #98bec8;
+    color: #4a7783;
 }
 .pagination.bordered ul>li>a:hover,
 .pagination.bordered ul>.active>a {
-    color: #98bec8;
+    color: #4a7783;
 }
 .page-navi:not(.bg) a:hover {
-    color: #98bec8
+    color: #4a7783
 }
 .inverse-text .pagination:not(.bg) ul>li>a:hover,
 .inverse-text .page-navi:not(.bg) a:hover,
 .inverse-text .nav-tabs .nav-link:hover,
 .inverse-text .cbp-filter-item:hover {
-    color: #98bec8 !important;
+    color: #4a7783 !important;
 }
 .inverse-text .accordion-wrapper.lined .card-header a:hover,
 .inverse-text .tabs-wrapper:not(.lined) .nav-tabs .nav-link:not(.active):hover {
-    color: #98bec8 !important;
+    color: #4a7783 !important;
     border-color: #98bec8 !important;
 }
 .inverse-text .box.box-border:hover,
@@ -186,7 +186,7 @@ input[type="color"]:focus,
 .color-default,
 .list-default>li:before,
 .list-default i {
-    color: #98bec8 !important;
+    color: #4a7783 !important;
 }
 .bg-default {
     background-color: #98bec8 !important;
@@ -201,7 +201,7 @@ input[type="color"]:focus,
     border-color: #98bec8 !important;
 }
 .circle.default .progressbar-text {
-    color: #98bec8 !important;
+    color: #4a7783 !important;
 }
 @media (min-width: 992px) {
     .navbar-nav>li>.dropdown-menu {
