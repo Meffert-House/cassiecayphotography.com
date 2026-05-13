@@ -91,7 +91,9 @@
 }
 
 .filter-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: 13px;
   font-family: 'Montserrat', sans-serif;
   letter-spacing: 0;
@@ -99,11 +101,11 @@
   color: #888;
   font-weight: 700;
   line-height: 1;
-  padding: 0;
+  padding: 10px 0;
   margin: 0 20px 10px 0;
-  -webkit-transition: all 200ms ease-in-out;
-  -o-transition: all 200ms ease-in-out;
-  transition: all 200ms ease-in-out;
+  -webkit-transition: color 200ms ease-in-out;
+  -o-transition: color 200ms ease-in-out;
+  transition: color 200ms ease-in-out;
   cursor: pointer;
   background: none;
   border: none;
@@ -123,7 +125,7 @@
 /* Active and hover states */
 .filter-btn.active,
 .filter-btn:hover {
-  color: #4c86e5;
+  color: #98bec8;
 }
 
 /* Separator dot after each button (except last) */
@@ -151,7 +153,7 @@
 }
 
 .inverse-text .filter-btn:hover {
-  color: #4c86e5 !important;
+  color: #98bec8 !important;
 }
 
 .inverse-text .filter-btn:after {
@@ -201,4 +203,18 @@
   -webkit-transition: none;
   -o-transition: none;
   transition: none;
+}
+
+/*-----------------------------------------------------------------------------------
+  Reduced motion: serve a static gallery, no shuffle animations
+-----------------------------------------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-item,
+  .filter-btn {
+    transition: none !important;
+  }
+  .portfolio-item--visible,
+  .portfolio-item--hidden {
+    transform: none !important;
+  }
 }

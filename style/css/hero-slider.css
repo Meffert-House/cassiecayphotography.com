@@ -97,3 +97,10 @@
     right: 15px;
   }
 }
+
+/* Reduced motion: serve a static hero with no crossfade */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slider .embla__slide {
+    transition: none;
+  }
+}

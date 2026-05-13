@@ -8,28 +8,33 @@
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     /*-----------------------------------------------------------------------------------*/
-    /*	HERO SLIDER (Embla Carousel)
+    /*	HERO SLIDER (Embla Carousel) — honors prefers-reduced-motion, WCAG 2.2.2 pause
     /*-----------------------------------------------------------------------------------*/
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var heroSlider = document.querySelector('.hero-slider');
     if (heroSlider) {
         var viewportNode = heroSlider.querySelector('.embla__viewport');
         var slides = heroSlider.querySelectorAll('.embla__slide');
+        var pauseBtn = heroSlider.querySelector('.hero-pause');
 
-        // Initialize with autoplay
+        // Skip autoplay plugin entirely under reduced motion
+        var emblaPlugins = [];
+        if (!prefersReducedMotion) {
+            emblaPlugins.push(EmblaCarouselAutoplay({
+                delay: 6000,
+                stopOnInteraction: false,
+                stopOnMouseEnter: false,
+                playOnInit: true
+            }));
+        }
+
         var emblaApi = EmblaCarousel(
             viewportNode,
             {
                 loop: true,
                 draggable: false  // No manual navigation per requirements
             },
-            [
-                EmblaCarouselAutoplay({
-                    delay: 6000,              // 6 seconds between slides
-                    stopOnInteraction: false, // Don't stop on any interaction
-                    stopOnMouseEnter: false,  // DON'T pause on hover (fixes BUG-03)
-                    playOnInit: true          // Start automatically
-                })
-            ]
+            emblaPlugins
         );
 
         // Handle fade effect via CSS class
@@ -46,6 +51,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
         emblaApi.on('select', setSelectedClass);
         setSelectedClass(); // Set initial state
+
+        // Hero pause / play control (WCAG 2.2.2 — autoplay > 5s needs user control)
+        if (pauseBtn) {
+            if (prefersReducedMotion) {
+                // Nothing to pause; hide the control
+                pauseBtn.hidden = true;
+            } else {
+                pauseBtn.addEventListener('click', function() {
+                    var autoplay = emblaApi.plugins().autoplay;
+                    if (!autoplay) return;
+                    var paused = pauseBtn.getAttribute('aria-pressed') === 'true';
+                    if (paused) {
+                        autoplay.play();
+                        pauseBtn.setAttribute('aria-pressed', 'false');
+                        pauseBtn.setAttribute('aria-label', 'Pause hero slideshow');
+                    } else {
+                        autoplay.stop();
+                        pauseBtn.setAttribute('aria-pressed', 'true');
+                        pauseBtn.setAttribute('aria-label', 'Play hero slideshow');
+                    }
+                });
+            }
+        }
     }
     /*-----------------------------------------------------------------------------------*/
     /*	STICKY HEADER (Vanilla JS - replaces Headhesive)
@@ -181,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         el.insertAdjacentHTML('afterbegin', '<span class="bg"></span>');
     });
     /*-----------------------------------------------------------------------------------*/
-    /*	GLIGHTBOX (replaced LightGallery - Phase 8)
+    /*	GLIGHTBOX (replaced LightGallery - Phase 8) — honors prefers-reduced-motion
     /*-----------------------------------------------------------------------------------*/
     var lightbox = GLightbox({
         selector: '.light-gallery a',
@@ -189,7 +217,9 @@ document.addEventListener('DOMContentLoaded', function() {
         loop: true,
         closeOnOutsideClick: true,
         keyboardNavigation: true,
-        slideEffect: 'fade'
+        slideEffect: prefersReducedMotion ? 'none' : 'fade',
+        openEffect: prefersReducedMotion ? 'none' : 'zoom',
+        closeEffect: prefersReducedMotion ? 'none' : 'zoom'
     });
     /*-----------------------------------------------------------------------------------*/
     /*	PORTFOLIO GRID (Muuri - replaced Cubeportfolio in Phase 11)
@@ -204,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
             img.removeAttribute('loading');
         });
 
-        // Initialize Muuri grid
+        // Initialize Muuri grid — honors prefers-reduced-motion
         grid = new Muuri('#portfolio-grid', {
             items: '.portfolio-item',
             layout: {
@@ -213,16 +243,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 alignRight: false,
                 alignBottom: false
             },
-            showDuration: 300,
-            hideDuration: 200,
-            layoutDuration: 300,
+            showDuration: prefersReducedMotion ? 0 : 300,
+            hideDuration: prefersReducedMotion ? 0 : 200,
+            layoutDuration: prefersReducedMotion ? 0 : 300,
             visibleStyles: {
                 opacity: 1,
                 transform: 'scale(1)'
             },
             hiddenStyles: {
                 opacity: 0,
-                transform: 'scale(0.5)'
+                transform: prefersReducedMotion ? 'scale(1)' : 'scale(0.5)'
             }
         });
 
@@ -249,7 +279,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Filter function with GLightbox integration (PORT-02, PORT-04)
+        var emptyState = document.getElementById('portfolio-empty');
+
+        // Filter function with GLightbox integration + empty-state toggle (PORT-02, PORT-04)
         function filterPortfolio(category) {
             grid.filter(function(item) {
                 if (category === '*') return true;
@@ -257,6 +289,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 return item.getElement().classList.contains(categoryClass);
             }, {
                 onFinish: function() {
+                    // Show empty-state message when no items match the filter
+                    if (emptyState) {
+                        var visibleCount = grid.getItems().filter(function(i) {
+                            return i.isVisible();
+                        }).length;
+                        emptyState.hidden = visibleCount > 0;
+                    }
                     // Delay lightbox reload to ensure DOM updates complete
                     setTimeout(function() {
                         lightbox.reload();
@@ -265,16 +304,18 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Bind filter button click handlers (PORT-02)
+        // Bind filter button click handlers — buttons carry aria-pressed for screen readers (PORT-02)
         document.querySelectorAll('.filter-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var category = this.getAttribute('data-filter');
 
-                // Update active state
+                // Update active class + aria-pressed across all filter buttons
                 document.querySelectorAll('.filter-btn').forEach(function(b) {
                     b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
                 });
                 this.classList.add('active');
+                this.setAttribute('aria-pressed', 'true');
 
                 // Apply filter with optional View Transitions enhancement (PORT-05)
                 if (document.startViewTransition) {

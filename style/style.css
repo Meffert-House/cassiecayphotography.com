@@ -69,6 +69,10 @@ Author:		elemis
 :focus {
     outline: 0
 }
+:focus-visible {
+    outline: 2px solid #4a7783;
+    outline-offset: 2px;
+}
 .fit-vids-style {
     display: none
 }
@@ -5691,4 +5695,134 @@ list-blue i {
 /* Offset for fixed header on anchor targets */
 section[id] {
     scroll-margin-top: 68px;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*	SKIP LINK (a11y, WCAG 2.4.1)
+/*-----------------------------------------------------------------------------------*/
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 8px;
+    z-index: 10000;
+    padding: 10px 16px;
+    background: #fff;
+    color: #404040;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 2px solid #4a7783;
+    transition: top 150ms ease-in-out;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+    top: 8px;
+    color: #4a7783;
+    outline: none;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*	FOOTER LEGAL (Pencil Note on Inner Spine, WCAG AA)
+/*-----------------------------------------------------------------------------------*/
+.footer-legal {
+    font-size: 12px;
+    color: #888888;
+    margin-top: 8px;
+}
+.footer-legal a {
+    color: #888888;
+    text-decoration: underline;
+}
+.footer-legal a:hover,
+.footer-legal a:focus-visible {
+    color: #98bec8;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*	PORTFOLIO EMPTY STATE (filter returns no items)
+/*-----------------------------------------------------------------------------------*/
+.portfolio-empty {
+    padding: 40px 20px;
+    text-align: center;
+}
+.portfolio-empty p {
+    margin: 0;
+    font-family: 'Muli', sans-serif;
+    font-size: 16px;
+    line-height: 28px;
+    color: rgba(255, 255, 255, 0.85);
+}
+.portfolio-empty a {
+    color: #98bec8;
+    text-decoration: underline;
+}
+.portfolio-empty a:hover,
+.portfolio-empty a:focus-visible {
+    color: #b5d3da;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*	HERO PAUSE / PLAY (WCAG 2.2.2 control for autoplay carousel)
+/*-----------------------------------------------------------------------------------*/
+.hero-pause {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    z-index: 12;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(24, 24, 24, 0.55);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 150ms ease-in-out;
+}
+.hero-pause:hover,
+.hero-pause:focus-visible {
+    background: rgba(24, 24, 24, 0.8);
+    outline: none;
+}
+.hero-pause svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    display: block;
+}
+.hero-pause .icon-play {
+    display: none;
+}
+.hero-pause[aria-pressed="true"] .icon-pause {
+    display: none;
+}
+.hero-pause[aria-pressed="true"] .icon-play {
+    display: block;
+}
+@media (max-width: 480px) {
+    .hero-pause {
+        bottom: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*	REDUCED MOTION (PRODUCT.md commitment, WCAG 2.3.3)
+/*-----------------------------------------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

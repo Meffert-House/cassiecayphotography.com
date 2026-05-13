@@ -63,12 +63,13 @@
                 form.reset();
 
             } catch (error) {
-                // Error handling
-                messageEl.style.color = 'red';
+                // Error handling with mailto fallback so the user is never stranded
+                messageEl.style.color = '#a83232';
+                var fallback = ' If this keeps happening, email <a href="mailto:cassiecayphoto@gmail.com">cassiecayphoto@gmail.com</a> directly.';
                 if (error.message && error.message.includes('reCAPTCHA')) {
-                    messageEl.textContent = 'reCAPTCHA error. Please try again.';
+                    messageEl.innerHTML = 'reCAPTCHA error. Please try again.' + fallback;
                 } else {
-                    messageEl.textContent = 'Error. Your message was not sent.';
+                    messageEl.innerHTML = 'Sorry, your message did not send. Please try again.' + fallback;
                 }
             } finally {
                 // Always re-enable button
@@ -299,6 +300,7 @@
 </script>
 </head>
 <body class="onepage" data-bs-spy="scroll" data-bs-target=".navbar">
+<a class="skip-link" href="#main-content">Skip to content</a>
 <div class="content-wrapper">
   <nav class="navbar transparent absolute nav-wrapper-dark inverse-text navbar-expand-lg text-uppercase">
     <div class="container">
@@ -343,6 +345,7 @@
     </div>
   </div>
   <!-- /.offcanvas -->
+  <main id="main-content">
   <!-- ============================================================ -->
   <!-- SECTION: HOME (Hero Slider) [EDIT:HERO]                      -->
   <!-- ============================================================ -->
@@ -362,6 +365,10 @@
         <h1 class="hero-title">Cassie Cay Photography</h1>
         <p class="hero-tagline">Madison, Wisconsin Portrait Photographer</p>
       </div>
+      <button type="button" class="hero-pause" aria-label="Pause hero slideshow" aria-pressed="false">
+        <svg class="icon-pause" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1" width="3" height="12"></rect><rect x="9" y="1" width="3" height="12"></rect></svg>
+        <svg class="icon-play" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1 L12 7 L2 13 Z"></path></svg>
+      </button>
     </div>
   </section>
   <!-- /section -->
@@ -387,9 +394,9 @@
             <p class="lead larger">Hey there! I'm Cassie Meffert, a Madison area photographer with a passion to share my photography art.</p>
             <p>I first got started with photography when I was pregnant with my first child. Believe it or not, I bought the camera for my husband! It wasn't long before I was taking every opportunity to document my new babe's life. However, the real inspiration came six short months later when my sister passed away from breast cancer. It allowed me to reflect on the every day beauty of special moments and memories of the time we had together. It sparked a fire in me to capture those personal moments I reflected on. I also became sensitized to so many picturesque scenes around me that had previously been the mundane. I am so excited to be able to share my vision with you! </p>
             <ul class="social social-mute social-s">
-              <li><a href="https://www.instagram.com/cassie.cay.photography/?hl=en" target="_blank" rel="noopener noreferrer"><i class="fa fa-instagram"></i></a></li>
-              <li><a href="https://500px.com/p/cassiecayphoto" target="_blank" rel="noopener noreferrer"><i class="fa fa-500px"></i></a></li>
-              <li><a href="https://www.facebook.com/cassie.cay.photography" target="_blank" rel="noopener noreferrer"><i class="fa fa-facebook-f"></i></a></li>
+              <li><a href="https://www.instagram.com/cassie.cay.photography/?hl=en" target="_blank" rel="noopener noreferrer" aria-label="Cassie Cay Photography on Instagram"><i class="fa fa-instagram"></i></a></li>
+              <li><a href="https://500px.com/p/cassiecayphoto" target="_blank" rel="noopener noreferrer" aria-label="Cassie Cay Photography on 500px"><i class="fa fa-500px"></i></a></li>
+              <li><a href="https://www.facebook.com/cassie.cay.photography" target="_blank" rel="noopener noreferrer" aria-label="Cassie Cay Photography on Facebook"><i class="fa fa-facebook-f"></i></a></li>
             </ul>
           </div>
           <!-- /column --> 
@@ -419,17 +426,20 @@
       <h2 class="section-title text-center">Featured Photos</h2>
     </div>
     <!-- /.container -->
-    <div id="portfolio-filter" class="portfolio-filter-container text-center">
-      <div data-filter="*" class="filter-btn active">All</div>
-      <div data-filter=".couples" class="filter-btn">Couples</div>
-      <div data-filter=".family" class="filter-btn">Family</div>
-      <div data-filter=".milestone" class="filter-btn">Milestone</div>
-      <div data-filter=".newborn" class="filter-btn">Newborn</div>
-      <div data-filter=".senior" class="filter-btn">Senior</div>
-      <div data-filter=".wedding" class="filter-btn">Wedding</div>
+    <div id="portfolio-filter" class="portfolio-filter-container text-center" role="group" aria-label="Filter portfolio by category">
+      <button type="button" data-filter="*" class="filter-btn active" aria-pressed="true">All</button>
+      <button type="button" data-filter=".couples" class="filter-btn" aria-pressed="false">Couples</button>
+      <button type="button" data-filter=".family" class="filter-btn" aria-pressed="false">Family</button>
+      <button type="button" data-filter=".milestone" class="filter-btn" aria-pressed="false">Milestone</button>
+      <button type="button" data-filter=".newborn" class="filter-btn" aria-pressed="false">Newborn</button>
+      <button type="button" data-filter=".senior" class="filter-btn" aria-pressed="false">Senior</button>
+      <button type="button" data-filter=".wedding" class="filter-btn" aria-pressed="false">Wedding</button>
     </div>
     <div class="clearfix"></div>
     <div class="space20"></div>
+    <div id="portfolio-empty" class="portfolio-empty" hidden>
+      <p>No photos in this category yet. <a href="#contact">Reach out about availability.</a></p>
+    </div>
     <div id="portfolio-grid" class="portfolio-grid light-gallery">
 
       <!-- Image 1: cassiecay-F1 -->
@@ -1783,12 +1793,7 @@
         <div class="row">
           <div class="col-lg-8 offset-lg-2">
             <h2 class="section-title section-title-upper text-center">Get in Touch</h2>
-            <p class="text-center">I would be honored to capture a moment in time for you! If you would like to book a seasonal Mini Session, please click the booking button below.  For all other sessions, please use the contact form below to discuss availability. </p>
-			  <!--<center><a href="https://booking.appointy.com/cassiecayphotography" target="_blank"><picture>
-              <source srcset="images-optimized/avif/full/BookaPhotoshoot.avif" type="image/avif">
-              <source srcset="images-optimized/webp/full/BookaPhotoshoot.webp" type="image/webp">
-              <img src="images-optimized/jpeg/full/BookaPhotoshoot.jpg" alt="Book a photoshoot with Cassie Cay Photography" width="200" border="0">
-            </picture></a></center>-->
+            <p class="text-center">I would be honored to capture a moment in time for you. Use the contact form below to discuss availability.</p>
             <div class="space20"></div>
             <div class="row text-center">
               <div class="col-md-6"> <span class="icon icon-color color-white fs-48 mb-10"><i class="si-camping_map"></i></span>
@@ -1808,7 +1813,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="name" class="visually-hidden">Your name</label>
-                      <input type="text" class="form-control" name="name" id="name" placeholder="Your name" required="required" minlength="2">
+                      <input type="text" class="form-control" name="name" id="name" placeholder="Your name" required="required" minlength="2" autocomplete="name">
                     </div>
                     <!--/.form-group -->
                   </div>
@@ -1816,7 +1821,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="mail" class="visually-hidden">Your e-mail</label>
-                      <input type="email" class="form-control" name="mail" id="mail" placeholder="Your e-mail" required="required">
+                      <input type="email" class="form-control" name="mail" id="mail" placeholder="Your e-mail" required="required" autocomplete="email">
                     </div>
                     <!--/.form-group -->
                   </div>
@@ -1852,6 +1857,7 @@
     <!-- /.wrapper --> 
   </section>
   <!-- /section -->
+  </main>
   <footer class="dark-wrapper inverse-text">
     <div class="sub-footer">
       <div class="container inner text-center"> <picture>
@@ -1861,7 +1867,7 @@
         </picture>
         <div class="space25"></div>
         <p>© 2026 Cassie Cay Photography. All rights reserved.</p>
-        <p style="font-size:10px; color:#666; margin-top:8px;">Protected by reCAPTCHA · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style="color:#666;">Privacy</a> · <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" style="color:#666;">Terms</a></p>
+        <p class="footer-legal">Protected by reCAPTCHA · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy</a> · <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms</a></p>
         <div class="space30"></div>
         <ul class="social social-mute social-s">
           <li><a href="https://www.facebook.com/cassie.cay.photography" target="_blank" rel="noopener noreferrer" aria-label="Cassie Cay Photography on Facebook"><i class="fa fa-facebook-f"></i></a></li>
