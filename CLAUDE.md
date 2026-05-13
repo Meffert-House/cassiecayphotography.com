@@ -21,7 +21,7 @@ There is no test framework. The validation scripts above serve as the test suite
 - **Do NOT modify `infrastructure/`** -- CDK stacks are managed separately
 - **Do NOT modify `images/`** -- image processing is handled by the `process-images.yml` workflow
 - **Image optimization**: New photos go through `process-images.yml` which handles resizing, WebP conversion, and HTML snippet generation
-- **Single-page site**: `index.html` is the main entry point. CSS in `css/`, JS in `js/`
+- **Single-page site**: `index.html` is the main entry point. Stylesheets in `style/`, JS in `style/js/` and inline in `index.html`.
 - **Deployment**: Auto-deploys to AWS via GitHub Actions on push to `main`
 
 ## AWS Configuration
