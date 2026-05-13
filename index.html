@@ -317,12 +317,11 @@
           <li class="nav-item"><a class="nav-link scroll" href="#about">About</a></li>
           <li class="nav-item"><a class="nav-link scroll" href="#portfolio">Portfolio</a></li>
           <li class="nav-item"><a class="nav-link scroll" href="#services">Services</a></li>
-          <li class="nav-item"><a class="nav-link scroll" href="#contact">Schedule</a></li>
           <li class="nav-item"><a class="nav-link scroll" href="#contact">Contact</a></li>
         </ul>
         <!-- /.navbar-nav -->
       </div>
-      <!-- /.navbar-collapse --> 
+      <!-- /.navbar-collapse -->
     </div>
     <!-- /.container --> 
   </nav>
@@ -339,7 +338,6 @@
         <li class="nav-item"><a class="nav-link scroll" href="#about">About</a></li>
         <li class="nav-item"><a class="nav-link scroll" href="#portfolio">Portfolio</a></li>
         <li class="nav-item"><a class="nav-link scroll" href="#services">Services</a></li>
-        <li class="nav-item"><a class="nav-link scroll" href="#contact">Schedule</a></li>
         <li class="nav-item"><a class="nav-link scroll" href="#contact">Contact</a></li>
       </ul>
     </div>
@@ -1805,33 +1803,36 @@
             <!--/.row -->
             <div class="space30"></div>
             <div class="form-container">
-              <form id="contact-form" action="post">
+              <form id="contact-form">
                 <div class="row text-center">
-                  <div class="col-md-6 pr-10">
+                  <div class="col-md-6">
                     <div class="form-group">
+                      <label for="name" class="visually-hidden">Your name</label>
                       <input type="text" class="form-control" name="name" id="name" placeholder="Your name" required="required" minlength="2">
                     </div>
-                    <!--/.form-group --> 
+                    <!--/.form-group -->
                   </div>
                   <!--/column -->
-                  <div class="col-md-6 pl-10">
+                  <div class="col-md-6">
                     <div class="form-group">
+                      <label for="mail" class="visually-hidden">Your e-mail</label>
                       <input type="email" class="form-control" name="mail" id="mail" placeholder="Your e-mail" required="required">
                     </div>
-                    <!--/.form-group --> 
+                    <!--/.form-group -->
                   </div>
                   <!--/column -->
                   <div class="col-12">
                     <div class="form-group">
+                      <label for="subject" class="visually-hidden">Subject</label>
                       <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject">
                     </div>
-                    <!--/.form-group --> 
+                    <!--/.form-group -->
                   </div>
                   <!--/column -->
                   <div class="col-12">
+                    <label for="comment" class="visually-hidden">Your message</label>
                     <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Type your message here..." required></textarea>
-                    <button style="background:#9A7A7D; margin-top:20px;" type="button" ID="submitmessage" class="btn btn-full-rounded" onClick="submitToAPI(event)">Send Message</button>
-                    <footer class="notification-box"></footer>
+                    <button style="background:#9A7A7D; margin-top:20px;" type="button" id="submitmessage" class="btn btn-full-rounded" onclick="submitToAPI(event)">Send Message</button>
                     <p id="message" style="margin-top:10px;"></p>
                   </div>
                   <!--/column --> 
