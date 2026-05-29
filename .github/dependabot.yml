@@ -1,4 +1,10 @@
 version: 2
+# Grouping policy: groups bundle only minor + patch updates so they land as a
+# single low-risk PR. MAJOR updates are intentionally excluded from every group
+# so Dependabot opens them as separate, individually-titled PRs that are easy to
+# spot and review. This exists because a major vite-plugin-static-copy 3->4 bump
+# (breaking `dest` semantics) was once buried inside a grouped "all-npm" PR and
+# merged unreviewed, 404'ing the entire JS layer in production. Keep majors visible.
 updates:
   - package-ecosystem: "npm"
     directory: "/"
@@ -11,6 +17,9 @@ updates:
       all-npm:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/infrastructure"
@@ -23,6 +32,9 @@ updates:
       all-infra-npm:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -34,3 +46,6 @@ updates:
       all-actions:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
