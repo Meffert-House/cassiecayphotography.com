@@ -62,6 +62,13 @@
                 messageEl.textContent = 'Message Sent Successfully';
                 form.reset();
 
+                // Track the lead in GA4 (the contact form is the only conversion;
+                // without this, submissions are invisible in analytics). Mark
+                // "generate_lead" as a key event in the GA4 admin to count it.
+                if (typeof gtag === 'function') {
+                    gtag('event', 'generate_lead', { form_id: 'contact-form' });
+                }
+
             } catch (error) {
                 // Error handling with mailto fallback so the user is never stranded
                 messageEl.style.color = '#a83232';
