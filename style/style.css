@@ -2795,6 +2795,13 @@ a.color-s-youtube-square:hover,
 .icon {
     display: inline-block;
 }
+/* Inline-SVG contact icons (replaced the icon-font glyphs). Color inherits from
+   .inverse-text via currentColor; restore the inline-block + bottom spacing the
+   former `icon ... mb-10` utility classes provided. */
+.contact-icon {
+    display: inline-block;
+    margin-bottom: 10px;
+}
 .icon p {
     color: #606060;
 }

@@ -63,46 +63,50 @@ export default defineConfig({
     cacheBustStaticScripts(),
     viteStaticCopy({
       targets: [
+        // NOTE: vite-plugin-static-copy v4 preserves the full src path under `dest`
+        // (v3 placed a file at dest/<basename>). So `dest` must be '.' here — the src
+        // already carries the 'style/js/' or 'style/' prefix. Using dest:'style/js'
+        // double-nests to dist/style/js/style/js/... and 404s every script in prod.
         // Copy vendor JS files that should not be bundled
         {
           src: 'style/js/bootstrap.bundle.min.js',
-          dest: 'style/js'
+          dest: '.'
         },
         {
           src: 'style/js/muuri.min.js',
-          dest: 'style/js'
+          dest: '.'
         },
         // Copy Embla Carousel (Phase 8 - replaced Revolution Slider)
         {
           src: 'style/js/embla-carousel.umd.js',
-          dest: 'style/js'
+          dest: '.'
         },
         {
           src: 'style/js/embla-carousel-autoplay.umd.js',
-          dest: 'style/js'
+          dest: '.'
         },
         // Copy GLightbox (Phase 8 - replaced LightGallery)
         {
           src: 'style/js/glightbox.min.js',
-          dest: 'style/js'
+          dest: '.'
         },
         // Copy custom JS files (Phase 7 - extracted from plugins.js and scripts.js)
         {
           src: 'style/js/custom-plugins.js',
-          dest: 'style/js'
+          dest: '.'
         },
         {
           src: 'style/js/custom-scripts.js',
-          dest: 'style/js'
+          dest: '.'
         },
         // Copy CSS files
         {
           src: 'style/css',
-          dest: 'style'
+          dest: '.'
         },
         {
           src: 'style/style.css',
-          dest: 'style'
+          dest: '.'
         },
         // style/type/ removed from static-copy 2026-05: icon fonts (Slimicons,
         // FontAwesome, elemis, lg) are no longer used (replaced with inline SVG),
