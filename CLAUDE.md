@@ -8,12 +8,15 @@ Photography portfolio site for Cassie Cay Photography (Cassie Meffert). Single-p
 npm ci                    # Install dependencies (use this, not npm install)
 npm run build             # Build with Vite (outputs to dist/)
 npm run validate:html     # Validate HTML structure
-npm run validate:refs     # Check for broken references
+npm run validate:refs     # Check source references resolve in the source tree
+npm run validate:dist     # Check built dist/ pages reference no missing assets (runs in postbuild)
 npm run validate:images   # Check image sizes (non-blocking)
 npm run dev               # Local dev server
 ```
 
 There is no test framework. The validation scripts above serve as the test suite. Always run `npm ci && npm run build && npm run validate:html && npm run validate:refs` before opening PRs.
+
+`validate:dist` runs automatically after every `npm run build` (via `postbuild`) and fails the build if a built page references a script/stylesheet/image that the build did not emit -- the guard added after a `vite-plugin-static-copy` major bump silently double-nested asset paths and 404'd the entire JS layer in production. `validate:refs` (source-level) cannot catch that class of bug; `validate:dist` (output-level) can.
 
 ## Key Conventions
 

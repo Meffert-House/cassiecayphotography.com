@@ -10,10 +10,11 @@
     "preview": "vite preview",
     "preprocess": "node scripts/optimize-images.js",
     "prebuild": "npm run preprocess",
-    "postbuild": "npm run generate:sitemap",
+    "postbuild": "npm run generate:sitemap && npm run validate:dist",
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "validate:html": "node scripts/validate-html.js",
     "validate:refs": "node scripts/check-references.js",
+    "validate:dist": "node scripts/check-dist-references.js",
     "validate:images": "node scripts/check-image-sizes.js",
     "validate:staged": "node scripts/validate-staged.js",
     "prepare": "husky"
