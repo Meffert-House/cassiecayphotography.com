@@ -274,30 +274,15 @@ function handler(event) {
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
     });
 
-    // 4xx Error Rate Alarm - triggers on client errors (but not 404s from expected missing files)
-    const error4xxAlarm = new cloudwatch.Alarm(this, 'Error4xxAlarm', {
-      alarmName: 'cassiecayphoto-4xx-errors',
-      alarmDescription: 'CloudFront 4xx error rate exceeded threshold',
-      metric: new cloudwatch.Metric({
-        namespace: 'AWS/CloudFront',
-        metricName: '4xxErrorRate',
-        dimensionsMap: {
-          DistributionId: this.distribution.distributionId,
-          Region: 'Global',
-        },
-        statistic: 'Average',
-        period: cdk.Duration.minutes(5),
-      }),
-      threshold: 10, // 10% error rate (higher threshold since some 404s are expected)
-      evaluationPeriods: 2,
-      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
-    });
+    // NOTE: a 4xx error-rate alarm previously lived here. It was removed because it
+    // was too noisy on a static site -- bot/crawler 404s push the 4xx rate over the
+    // threshold and generate false alerts. It was deleted out-of-band in production;
+    // this removal makes the CDK source match that intent so a deploy won't recreate
+    // it. 5xx (real server/origin errors) remains alarmed below.
 
-    // Add alarm actions if topic exists
+    // Add alarm action if topic exists
     if (alarmTopic) {
       error5xxAlarm.addAlarmAction(new actions.SnsAction(alarmTopic));
-      error4xxAlarm.addAlarmAction(new actions.SnsAction(alarmTopic));
     }
 
     // Outputs
