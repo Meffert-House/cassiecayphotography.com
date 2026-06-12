@@ -22,6 +22,7 @@ jobs:
 
     permissions:
       contents: write
+      actions: write  # dispatch the Deploy workflow after committing processed photos
 
     concurrency:
       group: process-images
@@ -157,14 +158,14 @@ jobs:
 
             if [ -f "images-optimized/jpeg/800w/$filename.jpg" ]; then
               echo '<!-- ========== MOVE THIS BLOCK START ========== -->' >> new-images.html
-              echo "<!-- Image: $filename | Category: family (options: family, milestone, senior, newborn, couples, wedding) -->" >> new-images.html
+              echo "<!-- Image: $filename | TODO: set Category (family, milestone, senior, newborn, couples, wedding) and refine the generic alt text below -->" >> new-images.html
               echo '<div class="portfolio-item family">' >> new-images.html
               echo '  <div class="portfolio-item-content">' >> new-images.html
               echo "    <figure class=\"overlay overlay2\"><a href=\"images-optimized/jpeg/full/$filename.jpg\">" >> new-images.html
               echo '      <picture>' >> new-images.html
               echo "        <source srcset=\"images-optimized/avif/800w/$filename.avif 800w\" sizes=\"(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 400px\" type=\"image/avif\">" >> new-images.html
               echo "        <source srcset=\"images-optimized/webp/800w/$filename.webp 800w\" sizes=\"(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 400px\" type=\"image/webp\">" >> new-images.html
-              echo "        <img src=\"images-optimized/jpeg/800w/$filename.jpg\" srcset=\"images-optimized/jpeg/800w/$filename.jpg 800w\" sizes=\"(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 400px\" alt=\"[ADD DESCRIPTION]\" loading=\"lazy\">" >> new-images.html
+              echo "        <img src=\"images-optimized/jpeg/800w/$filename.jpg\" srcset=\"images-optimized/jpeg/800w/$filename.jpg 800w\" sizes=\"(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 400px\" alt=\"Photography by Cassie Cay Photography in Madison, Wisconsin\" loading=\"lazy\">" >> new-images.html
               echo '      </picture>' >> new-images.html
               echo '    </a></figure>' >> new-images.html
               echo '  </div>' >> new-images.html
@@ -190,7 +191,7 @@ jobs:
               echo '<figure><picture>' >> new-services.html
               echo "  <source srcset=\"images-optimized/avif/full/$filename.avif\" type=\"image/avif\">" >> new-services.html
               echo "  <source srcset=\"images-optimized/webp/full/$filename.webp\" type=\"image/webp\">" >> new-services.html
-              echo "  <img class=\"octagon\" src=\"images-optimized/jpeg/full/$filename.jpg\" alt=\"[ADD DESCRIPTION]\">" >> new-services.html
+              echo "  <img class=\"octagon\" src=\"images-optimized/jpeg/full/$filename.jpg\" alt=\"Photography by Cassie Cay Photography in Madison, Wisconsin\">" >> new-services.html
               echo '</picture></figure>' >> new-services.html
               echo '<!-- ========== END SERVICE IMAGE ========== -->' >> new-services.html
             fi
@@ -211,7 +212,7 @@ jobs:
               echo "<!-- ========== NEW HERO SLIDE: $filename ========== -->" >> new-hero.html
               echo '<!-- Add this inside the .embla__container div -->' >> new-hero.html
               echo '<div class="embla__slide">' >> new-hero.html
-              echo "  <img src=\"images-optimized/jpeg/full/$filename.jpg\" alt=\"[ADD DESCRIPTION]\">" >> new-hero.html
+              echo "  <img src=\"images-optimized/jpeg/full/$filename.jpg\" alt=\"Photography by Cassie Cay Photography in Madison, Wisconsin\">" >> new-hero.html
               echo '</div>' >> new-hero.html
               echo '<!-- ========== END HERO SLIDE ========== -->' >> new-hero.html
             fi
@@ -248,6 +249,7 @@ jobs:
           fi
 
       - name: Commit and push
+        id: commit
         if: steps.check.outputs.has_images == 'true'
         run: |
           git config user.name "github-actions[bot]"
@@ -259,7 +261,24 @@ jobs:
           [ "${{ steps.check.outputs.has_portfolio }}" == "true" ] && MSG="$MSG (portfolio)"
           [ "${{ steps.check.outputs.has_services }}" == "true" ] && MSG="$MSG (services)"
           [ "${{ steps.check.outputs.has_hero }}" == "true" ] && MSG="$MSG (hero)"
-          MSG="$MSG [skip ci]"
 
-          git commit -m "$MSG" || echo "No changes to commit"
-          git push
+          # No [skip ci]: this push uses GITHUB_TOKEN, which by GitHub's rules does not
+          # trigger any workflow (including this one), so loop prevention is automatic.
+          # The marker only ever suppressed the Deploy workflow, leaving processed photos
+          # committed but never shipped. Deploy is dispatched explicitly in the next step.
+          if git commit -m "$MSG"; then
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+
+      - name: Trigger deploy
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GITHUB_TOKEN pushes don't fire the push-triggered Deploy workflow, so
+          # dispatch it explicitly against the just-pushed main.
+          gh workflow run "Deploy to AWS" --repo "${{ github.repository }}" --ref main
+          echo "Deploy workflow dispatched"
