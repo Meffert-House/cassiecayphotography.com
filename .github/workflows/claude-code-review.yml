@@ -12,7 +12,8 @@ jobs:
       contents: read
       pull-requests: write
       issues: read
-      id-token: write
+      # No id-token: the review authenticates via CLAUDE_CODE_OAUTH_TOKEN and does not
+      # deploy to AWS, so it does not need OIDC token-minting capability.
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:

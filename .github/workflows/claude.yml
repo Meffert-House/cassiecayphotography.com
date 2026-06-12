@@ -25,7 +25,9 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
+      # No id-token: this job authenticates to Claude via CLAUDE_CODE_OAUTH_TOKEN and
+      # never deploys to AWS. Granting id-token: write would let a manipulated agent
+      # mint an OIDC token and assume the deploy role (the trust policy is repo-wide).
       actions: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -79,7 +81,9 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
+      # No id-token: this job authenticates to Claude via CLAUDE_CODE_OAUTH_TOKEN and
+      # never deploys to AWS. Granting id-token: write would let a manipulated agent
+      # mint an OIDC token and assume the deploy role (the trust policy is repo-wide).
       actions: read
     env:
       MAX_ROUNDS: '3'
@@ -143,7 +147,9 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
+      # No id-token: this job authenticates to Claude via CLAUDE_CODE_OAUTH_TOKEN and
+      # never deploys to AWS. Granting id-token: write would let a manipulated agent
+      # mint an OIDC token and assume the deploy role (the trust policy is repo-wide).
       actions: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6

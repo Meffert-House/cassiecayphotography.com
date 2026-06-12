@@ -1,9 +1,16 @@
 name: Auto-merge Claude PRs
 
+# Human-in-the-loop gate: a Claude-authored PR is only merged + deployed AFTER a
+# real person submits an approving review. The agent cannot satisfy this itself --
+# GitHub forbids approving your own PR (the author is app/claude), and bot/app
+# reviews are explicitly excluded below. Without this gate, public input could reach
+# production through issue -> agent PR -> auto-merge with no human checkpoint.
 on:
   workflow_run:
     workflows: [Claude Code Review]
     types: [completed]
+  pull_request_review:
+    types: [submitted]
 
 concurrency:
   group: auto-merge
@@ -11,7 +18,11 @@ concurrency:
 
 jobs:
   auto-merge:
-    if: github.event.workflow_run.conclusion == 'success'
+    # Run when the review workflow finishes successfully, or whenever a review is
+    # submitted (the human approval that actually unlocks the merge).
+    if: >-
+      github.event_name == 'pull_request_review' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -20,34 +31,37 @@ jobs:
       checks: read
       actions: write
     steps:
-      - name: Find PR from workflow run
+      - name: Find PR
         id: find-pr
         env:
           GH_TOKEN: ${{ github.token }}
           PR_DATA: ${{ toJson(github.event.workflow_run.pull_requests) }}
         run: |
-          # Try pull_requests array from the workflow_run event first
-          pr_number=$(echo "$PR_DATA" | jq -r '.[0].number // empty')
-
-          # Fallback: search by head branch if pull_requests array is empty
-          if [ -z "$pr_number" ]; then
-            head_branch="${{ github.event.workflow_run.head_branch }}"
-            echo "pull_requests array empty, searching by branch: $head_branch"
-            pr_number=$(gh pr list --repo "${{ github.repository }}" \
-              --head "$head_branch" \
-              --state open \
-              --json number \
-              --jq '.[0].number // empty')
+          if [ "${{ github.event_name }}" = "pull_request_review" ]; then
+            # The approval/review event carries the PR directly.
+            pr_number="${{ github.event.pull_request.number }}"
+          else
+            # workflow_run: try the pull_requests array, then fall back to head branch.
+            pr_number=$(echo "$PR_DATA" | jq -r '.[0].number // empty')
+            if [ -z "$pr_number" ]; then
+              head_branch="${{ github.event.workflow_run.head_branch }}"
+              echo "pull_requests array empty, searching by branch: $head_branch"
+              pr_number=$(gh pr list --repo "${{ github.repository }}" \
+                --head "$head_branch" \
+                --state open \
+                --json number \
+                --jq '.[0].number // empty')
+            fi
           fi
 
           if [ -z "$pr_number" ]; then
-            echo "No open PR found for this workflow run"
+            echo "No open PR found for this event"
             exit 0
           fi
 
           echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
 
-      - name: Verify author and merge
+      - name: Verify author, human approval, and checks -- then merge
         id: verify-and-merge
         if: steps.find-pr.outputs.pr_number
         env:
@@ -64,13 +78,30 @@ jobs:
           echo "Author: $pr_author"
           echo "URL: $pr_url"
 
-          # Only auto-merge PRs from claude[bot]
+          # Only auto-merge agent-authored PRs.
           if [ "$pr_author" != "app/claude" ]; then
             echo "Skipping: author is '$pr_author', not 'app/claude'"
             exit 0
           fi
 
-          # Verify all checks passed (exclude auto-merge's own check to avoid race condition)
+          # Require at least one APPROVED review from a real human. Reviews from bots
+          # or GitHub Apps (claude[bot], github-actions[bot], the app/claude author)
+          # do NOT count -- this is the human checkpoint before production.
+          human_approvals=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" \
+            --paginate \
+            --jq '[.[]
+                    | select(.state == "APPROVED")
+                    | select(.user.type != "Bot")
+                    | select(.user.login | endswith("[bot]") | not)
+                  ] | length')
+
+          if [ "${human_approvals:-0}" -lt 1 ]; then
+            echo "Holding: no human approval yet. A maintainer must approve this PR before it merges/deploys."
+            exit 0
+          fi
+          echo "Human approvals: $human_approvals"
+
+          # Verify all checks passed (exclude auto-merge's own check to avoid a race).
           failing=$(gh pr checks "$PR_NUMBER" --repo "${{ github.repository }}" \
             --json name,bucket --jq '[.[] | select(.bucket != "pass" and .name != "auto-merge")] | length')
 
@@ -81,7 +112,7 @@ jobs:
             exit 0
           fi
 
-          echo "All checks passed, merging..."
+          echo "Author + human approval + checks all OK, merging..."
           if merge_output=$(gh pr merge "$PR_NUMBER" --repo "${{ github.repository }}" \
             --squash --delete-branch 2>&1); then
             echo "Merged PR #$PR_NUMBER: $pr_title"
