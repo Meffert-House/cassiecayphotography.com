@@ -12,8 +12,8 @@
  */
 
 import { SitemapStream, streamToPromise } from 'sitemap';
-import { readdirSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { resolve, basename } from 'path';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { resolve } from 'path';
 
 const SITE_URL = 'https://cassiecayphotography.com';
 const DIST_DIR = 'dist';
@@ -71,24 +71,41 @@ function getCaptionFromFilename(filename) {
 }
 
 /**
- * Get list of portfolio images from dist directory
- * @returns {string[]} - Array of filenames
+ * Get list of portfolio images actually referenced on the built page.
+ *
+ * Sourced from the rendered dist/index.html (the gallery lightbox links point at
+ * `images-optimized/jpeg/full/cassiecay-*.jpg`) rather than from a raw directory
+ * listing. Listing the directory indexed orphaned images that appear on no page,
+ * which dilutes the image sitemap's signal to Google.
+ *
+ * @returns {string[]} - Array of unique filenames, in page order
  */
 function getPortfolioImages() {
-  const imageDir = resolve(DIST_DIR, IMAGE_PATH);
+  const htmlPath = resolve(DIST_DIR, 'index.html');
 
-  if (!existsSync(imageDir)) {
-    console.warn(`Warning: Image directory not found: ${imageDir}`);
+  if (!existsSync(htmlPath)) {
+    console.warn(`Warning: built page not found: ${htmlPath}`);
     return [];
   }
 
-  const files = readdirSync(imageDir);
+  const html = readFileSync(htmlPath, 'utf8');
 
-  // Filter to only portfolio images (cassiecay-{CATEGORY}{NUMBER}.jpg)
-  // Categories: E (event), F (family), L (lifestyle), M (milestone), NB (newborn), senior
+  // Match every reference to a full-size optimized JPEG and keep the filename.
+  const refPattern = new RegExp(`${IMAGE_PATH}/(cassiecay-[A-Za-z0-9]+\\.jpg)`, 'g');
   const portfolioPattern = /^cassiecay-(E|F|L|M|NB|senior)\d+.*\.jpg$/i;
 
-  return files.filter(f => portfolioPattern.test(f));
+  const seen = new Set();
+  const images = [];
+  let match;
+  while ((match = refPattern.exec(html)) !== null) {
+    const filename = match[1];
+    if (portfolioPattern.test(filename) && !seen.has(filename)) {
+      seen.add(filename);
+      images.push(filename);
+    }
+  }
+
+  return images;
 }
 
 /**

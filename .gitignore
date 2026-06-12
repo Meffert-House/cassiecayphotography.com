@@ -32,3 +32,4 @@ dist/
 *.log
 .playwright-mcp/
 .playwright-cli/
+.agent-review/

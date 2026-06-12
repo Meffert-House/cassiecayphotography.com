@@ -114,11 +114,12 @@ export default defineConfig({
         // via style/css/fonts.css. The remaining static-copy of style/type/ would
         // have shipped ~7.4MB of dead icon-font binaries to S3.
 
-        // Copy images directory (original - safety during migration)
-        {
-          src: 'images',
-          dest: '.'
-        },
+        // The full images/ originals directory (~70MB of source photos) is no longer
+        // copied: nothing on the page references it except images/favicon.ico, and Vite
+        // already fingerprints that into dist/assets/ via the <link rel="shortcut icon">
+        // in index.html / 404.html. Shipping the originals bloated every deploy artifact
+        // and S3 for no user-visible benefit. Everything displayed comes from
+        // images-optimized/ (copied below).
         // Copy optimized images directory (AVIF, WebP, JPEG in responsive widths)
         {
           src: 'images-optimized',
