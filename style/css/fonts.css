@@ -35,3 +35,52 @@
     font-style: normal;
     font-display: swap;
 }
+
+/*-----------------------------------------------------------------------------------*/
+/*  FONT FACES — Mulish (self-hosted; the open-licensed successor to Muli).
+/*  Body copy was previously pulled from Google Fonts as 'Muli', a render-blocking
+/*  third-party request. Self-hosting removes that request (and the gstatic hop) and
+/*  the privacy exposure. Kept the family name 'Muli' so existing CSS rules are
+/*  unchanged. Weights match what the old Google link requested (300/400/600/700 +
+/*  400 italic). WOFF2 only, per .browserslistrc.
+/*-----------------------------------------------------------------------------------*/
+
+@font-face {
+    font-family: 'Muli';
+    src: url('../type/mulish/Mulish-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Muli';
+    src: url('../type/mulish/Mulish-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Muli';
+    src: url('../type/mulish/Mulish-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Muli';
+    src: url('../type/mulish/Mulish-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Muli';
+    src: url('../type/mulish/Mulish-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
