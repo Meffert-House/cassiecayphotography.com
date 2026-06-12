@@ -78,8 +78,8 @@ export class StaticSiteStack extends cdk.Stack {
           contentSecurityPolicy: [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' blob: https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://www.googletagmanager.com",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.typekit.net https://p.typekit.net",
-            "font-src 'self' data: https://fonts.gstatic.com https://use.typekit.net",
+            "style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net",
+            "font-src 'self' data: https://use.typekit.net",
             "img-src 'self' data: https:",
             "connect-src 'self' https://*.lambda-url.us-east-1.on.aws https://www.google.com https://www.google-analytics.com",
             "frame-src https://www.google.com https://www.recaptcha.net",

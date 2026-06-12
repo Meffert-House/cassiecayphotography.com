@@ -35,9 +35,18 @@ export class GitHubOidcStack extends cdk.Stack {
         {
           StringEquals: {
             'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
-          },
-          StringLike: {
-            'token.actions.githubusercontent.com:sub': `repo:${props.repositoryOwner}/${props.repositoryName}:*`,
+            // Scope the trust to exactly the two subjects that legitimately deploy,
+            // instead of `repo:OWNER/REPO:*` (any workflow/branch/PR in the repo).
+            //   - the deploy job runs under `environment: production`, so GitHub mints
+            //     its OIDC token with sub `...:environment:production` (verified via
+            //     CloudTrail AssumeRoleWithWebIdentity on this role).
+            //   - the notify-failure job has no environment, so on a main-branch run
+            //     its sub is `...:ref:refs/heads/main`.
+            // StringEquals (not StringLike) since these are exact, wildcard-free values.
+            'token.actions.githubusercontent.com:sub': [
+              `repo:${props.repositoryOwner}/${props.repositoryName}:environment:production`,
+              `repo:${props.repositoryOwner}/${props.repositoryName}:ref:refs/heads/main`,
+            ],
           },
         },
         'sts:AssumeRoleWithWebIdentity'
