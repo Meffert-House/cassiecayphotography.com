@@ -5,10 +5,6 @@ import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as targets from 'aws-cdk-lib/aws-route53-targets';
-import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
-import * as sns from 'aws-cdk-lib/aws-sns';
-import * as subscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
-import * as actions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import { Construct } from 'constructs';
 
 export interface StaticSiteStackProps extends cdk.StackProps {
@@ -20,11 +16,6 @@ export interface StaticSiteStackProps extends cdk.StackProps {
    * After migration, set to false and redeploy to attach the domain.
    */
   skipDomainSetup?: boolean;
-  /**
-   * Email address to receive CloudWatch alarm notifications.
-   * If not provided, alarms will be created without notifications.
-   */
-  alertEmail?: string;
 }
 
 export class StaticSiteStack extends cdk.Stack {
@@ -242,48 +233,12 @@ function handler(event) {
       });
     }
 
-    // CloudWatch Alarms for error monitoring
-    const alarmTopic = props.alertEmail ? new sns.Topic(this, 'AlarmTopic', {
-      topicName: 'cassiecayphoto-alarms',
-      displayName: 'Cassie Cay Photography Alerts',
-    }) : undefined;
-
-    if (alarmTopic && props.alertEmail) {
-      alarmTopic.addSubscription(
-        new subscriptions.EmailSubscription(props.alertEmail)
-      );
-    }
-
-    // 5xx Error Rate Alarm - triggers on server/origin errors
-    const error5xxAlarm = new cloudwatch.Alarm(this, 'Error5xxAlarm', {
-      alarmName: 'cassiecayphoto-5xx-errors',
-      alarmDescription: 'CloudFront 5xx error rate exceeded threshold',
-      metric: new cloudwatch.Metric({
-        namespace: 'AWS/CloudFront',
-        metricName: '5xxErrorRate',
-        dimensionsMap: {
-          DistributionId: this.distribution.distributionId,
-          Region: 'Global',
-        },
-        statistic: 'Average',
-        period: cdk.Duration.minutes(5),
-      }),
-      threshold: 1, // 1% error rate
-      evaluationPeriods: 2,
-      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
-    });
-
-    // NOTE: a 4xx error-rate alarm previously lived here. It was removed because it
-    // was too noisy on a static site -- bot/crawler 404s push the 4xx rate over the
-    // threshold and generate false alerts. It was deleted out-of-band in production;
-    // this removal makes the CDK source match that intent so a deploy won't recreate
-    // it. 5xx (real server/origin errors) remains alarmed below.
-
-    // Add alarm action if topic exists
-    if (alarmTopic) {
-      error5xxAlarm.addAlarmAction(new actions.SnsAction(alarmTopic));
-    }
+    // CloudWatch error alarms (4xx + 5xx) and their SNS email topic were removed.
+    // The 4xx alarm was too noisy on a static site (bot/crawler 404s) and was deleted
+    // out-of-band; deleting its SNS topic alongside it also orphaned the 5xx alarm's
+    // notification. Per the owner's decision, error alerting is retired here entirely
+    // (monitored elsewhere). This makes the source match production and clears the
+    // related stack drift.
 
     // Outputs
     new cdk.CfnOutput(this, 'BucketName', {

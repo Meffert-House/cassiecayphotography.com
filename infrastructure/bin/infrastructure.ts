@@ -26,7 +26,6 @@ new StaticSiteStack(app, 'CassiePhotoStaticSiteStack', {
   description: 'Static site infrastructure for Cassie Cay Photography',
   domainName: 'cassiecayphotography.com',
   skipDomainSetup: false,
-  alertEmail: 'mitchell@mitchellmeffert.com',
 });
 
 // Contact form Lambda with Function URL
