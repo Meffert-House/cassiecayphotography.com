@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             viewportNode,
             {
                 loop: true,
-                draggable: false  // No manual navigation per requirements
+                watchDrag: false  // No manual navigation per requirements (Embla v7+ renamed `draggable`)
             },
             emblaPlugins
         );
@@ -351,7 +351,10 @@ document.addEventListener('DOMContentLoaded', function() {
     /*-----------------------------------------------------------------------------------*/
     /*	PARALLAX MOBILE
     /*-----------------------------------------------------------------------------------*/
-    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i)) {
+    // Feature-detect touch / no-hover devices instead of sniffing the (increasingly
+    // frozen) userAgent string. Touch devices can't do fixed-attachment parallax well,
+    // so they get the .mobile fallback.
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
         document.querySelectorAll('.image-wrapper').forEach(function(el) {
             el.classList.add('mobile');
         });
