@@ -5,7 +5,6 @@ import { createHash } from 'crypto'
 import { readFileSync } from 'fs'
 
 const HASHED_SCRIPTS = [
-  'style/js/custom-plugins.js',
   'style/js/custom-scripts.js',
 ]
 
@@ -90,11 +89,8 @@ export default defineConfig({
           src: 'style/js/glightbox.min.js',
           dest: '.'
         },
-        // Copy custom JS files (Phase 7 - extracted from plugins.js and scripts.js)
-        {
-          src: 'style/js/custom-plugins.js',
-          dest: '.'
-        },
+        // Copy custom JS (custom-plugins.js was removed when the quote slider moved
+        // from Swiper to the already-loaded Embla — see custom-scripts.js)
         {
           src: 'style/js/custom-scripts.js',
           dest: '.'

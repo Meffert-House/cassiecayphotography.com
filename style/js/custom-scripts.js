@@ -176,35 +176,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     })();
     /*-----------------------------------------------------------------------------------*/
-    /*	SWIPER
+    /*	QUOTE SLIDER (Embla — replaced Swiper 5.3.6 to drop the ~140KB custom-plugins
+    /*	bundle that existed only for this 3-quote carousel). Clickable dots, no autoplay,
+    /*	matching the previous behavior.
     /*-----------------------------------------------------------------------------------*/
-    document.querySelectorAll('.basic-slider').forEach(function(element, index) {
-        var container = element.querySelector('.swiper-container');
-        var prevBtn = element.querySelector('.swiper-button-prev');
-        var nextBtn = element.querySelector('.swiper-button-next');
-        var pagination = element.querySelector('.swiper-pagination');
+    document.querySelectorAll('.quote-embla').forEach(function(element) {
+        var viewport = element.querySelector('.embla__viewport');
+        var dotsNode = element.querySelector('.quote-dots');
+        if (!viewport || typeof EmblaCarousel === 'undefined') return;
 
-        if (container) container.classList.add('basic-slider-' + index);
-        if (prevBtn) prevBtn.classList.add('btn-prev-' + index);
-        if (nextBtn) nextBtn.classList.add('btn-next-' + index);
-        if (pagination) pagination.classList.add('basic-slider-pagination-' + index);
+        var quoteApi = EmblaCarousel(viewport, { loop: true });
 
-        if (!container) return; // Skip if no swiper container
+        // Build one dot button per slide
+        var dotNodes = [];
+        if (dotsNode) {
+            dotsNode.innerHTML = quoteApi.scrollSnapList().map(function(_, i) {
+                return '<button type="button" class="quote-dot" role="tab" aria-label="Go to quote ' + (i + 1) + '"></button>';
+            }).join('');
+            dotNodes = Array.prototype.slice.call(dotsNode.querySelectorAll('.quote-dot'));
+            dotNodes.forEach(function(dot, i) {
+                dot.addEventListener('click', function() { quoteApi.scrollTo(i); });
+            });
+        }
 
-        var swiper1 = new Swiper('.basic-slider-' + index, {
-            slidesPerView: 1,
-            spaceBetween: 0,
-            autoHeight: true,
-            grabCursor: true,
-            pagination: {
-                el: '.basic-slider-pagination-' + index,
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.btn-next-' + index,
-                prevEl: '.btn-prev-' + index
-            }
-        });
+        function updateDots() {
+            var selected = quoteApi.selectedScrollSnap();
+            dotNodes.forEach(function(dot, i) {
+                var active = i === selected;
+                dot.classList.toggle('is-active', active);
+                dot.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+        }
+
+        quoteApi.on('select', updateDots);
+        quoteApi.on('reInit', updateDots);
+        updateDots();
     });
     /*-----------------------------------------------------------------------------------*/
     /*	IMAGE ICON HOVER

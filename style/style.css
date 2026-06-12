@@ -5843,3 +5843,45 @@ section[id] {
         scroll-behavior: auto !important;
     }
 }
+
+/*-----------------------------------------------------------------------------------*/
+/*	QUOTE SLIDER (Embla) — replaced Swiper; sits on the dark image-wrapper section
+/*-----------------------------------------------------------------------------------*/
+.quote-embla {
+    position: relative;
+}
+.quote-embla .embla__viewport {
+    overflow: hidden;
+}
+.quote-embla .embla__container {
+    display: flex;
+}
+.quote-embla .embla__slide {
+    flex: 0 0 100%;
+    min-width: 0;
+}
+.quote-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 24px;
+}
+.quote-dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.quote-dot:hover {
+    background: rgba(255, 255, 255, 0.6);
+}
+.quote-dot.is-active {
+    background: #fff;
+    transform: scale(1.15);
+}
