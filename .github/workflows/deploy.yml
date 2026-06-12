@@ -11,8 +11,9 @@ on:
       - '.planning/**'
   workflow_dispatch:
 
+# Minimal default for all jobs; only the jobs that assume the AWS role via OIDC
+# request id-token: write explicitly (deploy + notify-failure).
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -112,6 +113,9 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     environment: production
+    permissions:
+      id-token: write   # assume the AWS deploy role via OIDC
+      contents: read
 
     steps:
       - name: Download build artifacts
