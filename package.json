@@ -4,6 +4,9 @@
   "description": "Cassie Cay Photography portfolio website",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

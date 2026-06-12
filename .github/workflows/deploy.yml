@@ -35,7 +35,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -148,11 +148,44 @@ jobs:
             --cache-control "public, max-age=31536000, immutable" \
             --metadata-directive REPLACE
 
-      - name: Set cache headers for HTML files
+      # The sync above stamps everything `immutable, max-age=1yr`. That is correct only
+      # for content-hashed assets (dist/assets/* and the images). Mutable documents and
+      # the unhashed vendor JS must get a short TTL or returning visitors keep stale
+      # copies for up to a year (the CloudFront /* invalidation refreshes the edge, but
+      # not already-cached browsers).
+      - name: Set cache headers for mutable documents
         run: |
-          aws s3 cp s3://${{ env.S3_BUCKET }}/index.html s3://${{ env.S3_BUCKET }}/index.html \
-            --cache-control "public, max-age=300" \
-            --content-type "text/html" \
+          # HTML pages — short cache so content edits surface quickly
+          for page in index.html 404.html; do
+            aws s3 cp s3://${{ env.S3_BUCKET }}/$page s3://${{ env.S3_BUCKET }}/$page \
+              --cache-control "public, max-age=300" \
+              --content-type "text/html" \
+              --metadata-directive REPLACE
+          done
+
+          # Sitemaps — regenerated every build
+          for map in sitemap.xml page-sitemap.xml image-sitemap.xml; do
+            aws s3 cp s3://${{ env.S3_BUCKET }}/$map s3://${{ env.S3_BUCKET }}/$map \
+              --cache-control "public, max-age=3600" \
+              --content-type "application/xml" \
+              --metadata-directive REPLACE
+          done
+
+          # Plain-text crawler/AI files
+          aws s3 cp s3://${{ env.S3_BUCKET }}/robots.txt s3://${{ env.S3_BUCKET }}/robots.txt \
+            --cache-control "public, max-age=3600" --content-type "text/plain" --metadata-directive REPLACE
+          aws s3 cp s3://${{ env.S3_BUCKET }}/llms.txt s3://${{ env.S3_BUCKET }}/llms.txt \
+            --cache-control "public, max-age=86400" --content-type "text/plain" --metadata-directive REPLACE
+
+      - name: Set cache headers for unhashed vendor JS
+        run: |
+          # style/js/*.js have stable (unhashed) URLs; the custom scripts carry a ?v=
+          # hash for browser busting but the vendor files do not. A 1-day TTL keeps them
+          # fresh enough without sacrificing most of the caching benefit.
+          aws s3 cp s3://${{ env.S3_BUCKET }}/style/js/ s3://${{ env.S3_BUCKET }}/style/js/ \
+            --recursive --exclude "*" --include "*.js" \
+            --cache-control "public, max-age=86400" \
+            --content-type "text/javascript" \
             --metadata-directive REPLACE
 
       - name: Invalidate CloudFront cache
