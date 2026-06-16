@@ -47,7 +47,7 @@
     "postcss": "^8.5.8",
     "sharp": "^0.34.5",
     "sitemap": "^9.0.1",
-    "vite": "^8.0.10",
+    "vite": "^8.0.16",
     "vite-plugin-static-copy": "^4.1.0"
   },
   "dependencies": {
