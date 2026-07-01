@@ -35,20 +35,20 @@
   "homepage": "https://github.com/Meffert-House/cassiecayphotography.com#readme",
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^8.0.0",
-    "autoprefixer": "^10.5.0",
+    "autoprefixer": "^10.5.2",
     "cli-progress": "^3.12.0",
     "cssnano": "^7.1.7",
-    "fs-extra": "^11.3.4",
+    "fs-extra": "^11.3.6",
     "glob": "^13.0.6",
     "html-validate": "^10.13.1",
     "husky": "^9.1.7",
     "node-html-parser": "^7.1.0",
     "p-limit": "^7.3.0",
-    "postcss": "^8.5.8",
-    "sharp": "^0.34.5",
+    "postcss": "^8.5.16",
+    "sharp": "^0.35.3",
     "sitemap": "^9.0.1",
-    "vite": "^8.0.10",
-    "vite-plugin-static-copy": "^4.1.0"
+    "vite": "^8.1.2",
+    "vite-plugin-static-copy": "^4.1.1"
   },
   "dependencies": {
     "embla-carousel": "^8.6.0",
