@@ -3,11 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Google reCAPTCHA Enterprise (invisible) -->
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LchXjYsAAAAANiJ_B8AKMUp7vwsJx_8HnKLBzr2" async defer></script>
-
     <!-- Submit contact form through API -->
     <script>
+        // Google reCAPTCHA Enterprise (invisible) is only needed for the contact
+        // form, so its ~0.5MB of third-party JS is loaded on demand: on first
+        // focus of a form field (giving it context before submit) or, failing
+        // that, at submit time. Every other visit skips the download entirely.
+        var recaptchaPromise = null;
+        function loadRecaptcha() {
+            if (!recaptchaPromise) {
+                recaptchaPromise = new Promise(function(resolve, reject) {
+                    var s = document.createElement('script');
+                    s.src = 'https://www.google.com/recaptcha/enterprise.js?render=6LchXjYsAAAAANiJ_B8AKMUp7vwsJx_8HnKLBzr2';
+                    s.async = true;
+                    s.onload = resolve;
+                    s.onerror = function() {
+                        recaptchaPromise = null; // allow retry on next submit
+                        reject(new Error('reCAPTCHA failed to load'));
+                    };
+                    document.head.appendChild(s);
+                });
+            }
+            return recaptchaPromise;
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('contact-form');
+            if (form) form.addEventListener('focusin', function() {
+                // Prefetch only; errors surface (with retry) on submit instead.
+                loadRecaptcha().catch(function() {});
+            }, { once: true });
+        });
+
         async function submitToAPI(e) {
             e.preventDefault();
 
@@ -26,7 +52,8 @@
             submitBtn.textContent = 'Sending...';
 
             try {
-                // Wait for reCAPTCHA to be ready
+                // Load (if not already prefetched on focus) and wait for reCAPTCHA
+                await loadRecaptcha();
                 await new Promise(resolve => grecaptcha.enterprise.ready(resolve));
 
                 // Execute reCAPTCHA Enterprise
@@ -88,9 +115,11 @@
         }
     </script>
 <meta name="description" content="Bright, natural-light family, newborn & senior photography in Waunakee & Madison, WI. See the gallery and book your session with Cassie Cay Photography.">
-<meta name="keywords" content="photographer, Madison, Wisconsin, Waunakee, family photography, newborn photography, senior portraits, milestone photos, wedding photography, event photography">
 <meta name="author" content="Cassie Meffert">
+<meta name="theme-color" content="#181818">
 <meta property="og:title" content="Cassie Cay Photography">
+<meta property="og:site_name" content="Cassie Cay Photography">
+<meta property="og:locale" content="en_US">
 <meta property="og:description" content="Professional photographer in Madison, Wisconsin specializing in family, newborn, senior, milestone, and event photography.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://cassiecayphotography.com/">
@@ -105,6 +134,7 @@
 <meta name="twitter:image:alt" content="Cassie Cay Photography - Madison Wisconsin photographer specializing in family and event photography">
 <link rel="canonical" href="https://cassiecayphotography.com/">
 <link rel="shortcut icon" href="images/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <title>Cassie Cay Photography | Madison, WI Professional Photographer</title>
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 <link rel="stylesheet" type="text/css" href="style/css/bootstrap.min.css">
@@ -114,7 +144,11 @@
 <link rel="stylesheet" type="text/css" href="style/style.css">
 <link rel="stylesheet" type="text/css" href="style/css/portfolio-grid.css">
 <link rel="stylesheet" type="text/css" href="style/css/color/oasis.css">
-<link rel="stylesheet" href="https://use.typekit.net/xzi7yjp.css">
+<!-- Typekit serves only the Liebe Gerda hero wordmark, so it must not block
+     first render. Loaded async via the preload/onload swap; the hero title
+     shows its Georgia fallback (DESIGN.md §3) until the font arrives. -->
+<link rel="preload" href="https://use.typekit.net/xzi7yjp.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://use.typekit.net/xzi7yjp.css"></noscript>
     <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TQDYZMGR2H"></script>
 <script>
@@ -147,8 +181,8 @@
   },
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": 43.0731,
-    "longitude": -89.4012
+    "latitude": 43.1919,
+    "longitude": -89.4557
   },
   "areaServed": [
     {
@@ -253,6 +287,8 @@
     "itemListElement": [
       {
         "@type": "Offer",
+        "price": "350.00",
+        "priceCurrency": "USD",
         "itemOffered": {
           "@type": "Service",
           "name": "Family Photography Session",
@@ -261,6 +297,8 @@
       },
       {
         "@type": "Offer",
+        "price": "450.00",
+        "priceCurrency": "USD",
         "itemOffered": {
           "@type": "Service",
           "name": "Newborn Photography Session",
@@ -269,6 +307,8 @@
       },
       {
         "@type": "Offer",
+        "price": "400.00",
+        "priceCurrency": "USD",
         "itemOffered": {
           "@type": "Service",
           "name": "Senior Portrait Session",
@@ -277,6 +317,8 @@
       },
       {
         "@type": "Offer",
+        "price": "350.00",
+        "priceCurrency": "USD",
         "itemOffered": {
           "@type": "Service",
           "name": "Milestone Photography Session",
@@ -285,6 +327,12 @@
       },
       {
         "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "350.00",
+          "priceCurrency": "USD",
+          "unitCode": "HUR"
+        },
         "itemOffered": {
           "@type": "Service",
           "name": "Wedding Photography",
@@ -293,6 +341,12 @@
       },
       {
         "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "350.00",
+          "priceCurrency": "USD",
+          "unitCode": "HUR"
+        },
         "itemOffered": {
           "@type": "Service",
           "name": "Event Photography",
@@ -313,7 +367,7 @@
         <div class="navbar-brand"><a href="/"><picture>
           <source srcset="images-optimized/avif/full/cassiecaylogobw2.avif" type="image/avif">
           <source srcset="images-optimized/webp/full/cassiecaylogobw2.webp" type="image/webp">
-          <img src="images-optimized/webp/full/cassiecaylogobw2.webp" alt="Cassie Cay Photography logo">
+          <img src="images-optimized/webp/full/cassiecaylogobw2.webp" width="268" height="191" alt="Cassie Cay Photography logo">
         </picture></a></div>
         <div class="navbar-hamburger ms-auto d-lg-none d-xl-none"><button class="hamburger animate" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav" aria-controls="offcanvasNav" aria-label="Toggle navigation"><span></span></button></div>
       </div>
@@ -398,7 +452,7 @@
             <figure><picture>
               <source srcset="images-optimized/avif/full/cassiecay-aboutbw.avif" type="image/avif">
               <source srcset="images-optimized/webp/full/cassiecay-aboutbw.webp" type="image/webp">
-              <img src="images-optimized/jpeg/full/cassiecay-aboutbw.jpg" alt="Cassie Meffert, professional photographer in Madison, Wisconsin" loading="lazy">
+              <img src="images-optimized/jpeg/full/cassiecay-aboutbw.jpg" width="500" height="357" alt="Cassie Meffert, professional photographer in Madison, Wisconsin" loading="lazy">
             </picture></figure>
           </div>
           <!-- /column -->
@@ -1821,7 +1875,7 @@
             <!--/.row -->
             <div class="space30"></div>
             <div class="form-container">
-              <form id="contact-form">
+              <form id="contact-form" onsubmit="submitToAPI(event)">
                 <div class="row text-center">
                   <div class="col-md-6">
                     <div class="form-group">
@@ -1850,7 +1904,7 @@
                   <div class="col-12">
                     <label for="comment" class="visually-hidden">Your message</label>
                     <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Type your message here..." required></textarea>
-                    <button type="button" id="submitmessage" class="btn mt-3" onClick="submitToAPI(event)">Send Message</button>
+                    <button type="submit" id="submitmessage" class="btn mt-3">Send Message</button>
                     <p id="message" style="margin-top:10px;" role="status" aria-live="polite"></p>
                   </div>
                   <!--/column --> 
