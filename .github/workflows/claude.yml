@@ -28,6 +28,10 @@ jobs:
       # No id-token: this job authenticates to Claude via CLAUDE_CODE_OAUTH_TOKEN and
       # never deploys to AWS. Granting id-token: write would let a manipulated agent
       # mint an OIDC token and assume the deploy role (the trust policy is repo-wide).
+      # claude-code-action ALSO needs a GitHub credential: without id-token its
+      # OIDC-for-app-token exchange fails ("Unable to get ACTIONS_ID_TOKEN_REQUEST_URL"),
+      # so github_token is passed explicitly to skip that exchange (same fix as
+      # claude-code-review.yml).
       actions: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -41,6 +45,7 @@ jobs:
 
       - uses: anthropics/claude-code-action@ebcdfe6dc6bb7511eb63e59e07df256dbcf59a2e # v1
         with:
+          github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-6
@@ -84,6 +89,10 @@ jobs:
       # No id-token: this job authenticates to Claude via CLAUDE_CODE_OAUTH_TOKEN and
       # never deploys to AWS. Granting id-token: write would let a manipulated agent
       # mint an OIDC token and assume the deploy role (the trust policy is repo-wide).
+      # claude-code-action ALSO needs a GitHub credential: without id-token its
+      # OIDC-for-app-token exchange fails ("Unable to get ACTIONS_ID_TOKEN_REQUEST_URL"),
+      # so github_token is passed explicitly to skip that exchange (same fix as
+      # claude-code-review.yml).
       actions: read
     env:
       MAX_ROUNDS: '3'
@@ -115,6 +124,7 @@ jobs:
       - uses: anthropics/claude-code-action@ebcdfe6dc6bb7511eb63e59e07df256dbcf59a2e # v1
         if: steps.round-check.outputs.exceeded == 'false'
         with:
+          github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-6
@@ -150,6 +160,10 @@ jobs:
       # No id-token: this job authenticates to Claude via CLAUDE_CODE_OAUTH_TOKEN and
       # never deploys to AWS. Granting id-token: write would let a manipulated agent
       # mint an OIDC token and assume the deploy role (the trust policy is repo-wide).
+      # claude-code-action ALSO needs a GitHub credential: without id-token its
+      # OIDC-for-app-token exchange fails ("Unable to get ACTIONS_ID_TOKEN_REQUEST_URL"),
+      # so github_token is passed explicitly to skip that exchange (same fix as
+      # claude-code-review.yml).
       actions: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -158,6 +172,7 @@ jobs:
 
       - uses: anthropics/claude-code-action@ebcdfe6dc6bb7511eb63e59e07df256dbcf59a2e # v1
         with:
+          github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-opus-4-6
