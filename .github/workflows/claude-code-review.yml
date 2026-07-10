@@ -12,8 +12,12 @@ jobs:
       contents: read
       pull-requests: write
       issues: read
-      # No id-token: the review authenticates via CLAUDE_CODE_OAUTH_TOKEN and does not
-      # deploy to AWS, so it does not need OIDC token-minting capability.
+      # No id-token: the review authenticates to Anthropic via CLAUDE_CODE_OAUTH_TOKEN
+      # and must not be able to mint OIDC tokens (the AWS deploy role trusts the whole
+      # repo). But claude-code-action ALSO needs a GitHub credential; without id-token
+      # it can't do its OIDC-for-app-token exchange and every run died with "Unable to
+      # get ACTIONS_ID_TOKEN_REQUEST_URL". Passing github_token below supplies the
+      # GitHub credential explicitly so the action skips the OIDC exchange entirely.
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
@@ -21,6 +25,7 @@ jobs:
 
       - uses: anthropics/claude-code-action@ebcdfe6dc6bb7511eb63e59e07df256dbcf59a2e # v1
         with:
+          github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_bots: "claude[bot],dependabot[bot]"
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
