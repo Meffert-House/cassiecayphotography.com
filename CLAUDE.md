@@ -109,4 +109,4 @@ aws s3 sync . s3://cassiecayphotography.com-site-content \
 | GCP Quota Project | `cassiecayphotographycom` |
 | Dashboard | https://analytics.google.com/analytics/web/#/a485983p269447426/reports/intelligenthome |
 
-Use `/analytics` skill to query GA4 data via API.
+Use the `/analytics` command (`.claude/commands/analytics.md`) to query GA4 data via API.
