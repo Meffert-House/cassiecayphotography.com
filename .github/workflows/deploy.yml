@@ -26,9 +26,11 @@ env:
   AWS_REGION: us-east-1
   S3_BUCKET: cassiecayphotography.com-site-content
 
+# Pinned to ubuntu-26.04 rather than ubuntu-latest so the image only changes on a
+# reviewed edit (ubuntu-latest moves to 26.04 during 2026-10-19 -- 2026-11-19).
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       performance: ${{ steps.lighthouse-scores.outputs.performance }}
       accessibility: ${{ steps.lighthouse-scores.outputs.accessibility }}
@@ -117,7 +119,7 @@ jobs:
 
   deploy:
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: production
     permissions:
       id-token: write   # assume the AWS deploy role via OIDC
@@ -205,7 +207,7 @@ jobs:
             --paths "/*"
 
   notify-failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [validate, deploy]
     if: always() && (needs.validate.result == 'failure' || needs.deploy.result == 'failure')
     permissions:

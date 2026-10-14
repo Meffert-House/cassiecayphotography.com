@@ -5,11 +5,18 @@ version: 2
 # spot and review. This exists because a major vite-plugin-static-copy 3->4 bump
 # (breaking `dest` semantics) was once buried inside a grouped "all-npm" PR and
 # merged unreviewed, 404'ing the entire JS layer in production. Keep majors visible.
+#
+# Cooldown: dependabot-auto-merge.yml merges eligible bumps and dispatches a
+# production deploy with no human in the loop, so a release must age 7 days
+# before Dependabot proposes it (time for a bad/compromised release to be pulled).
+# Applies to version updates only; security updates are never delayed.
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     commit-message:
       prefix: "chore(deps)"
@@ -25,6 +32,8 @@ updates:
     directory: "/infrastructure"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     commit-message:
       prefix: "chore(deps)"
@@ -40,6 +49,8 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "chore(deps)"
     groups:
