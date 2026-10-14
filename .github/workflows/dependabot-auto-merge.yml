@@ -1,25 +1,90 @@
 name: Dependabot Auto-Merge
 
+# Merges Dependabot minor/patch updates for the site (root npm + GitHub Actions)
+# once the same validate + build steps deploy.yml runs have passed, then dispatches
+# the deploy. Majors and /infrastructure updates are left open for a human: majors
+# are deliberately kept out of the dependabot.yml groups so they get reviewed, and
+# CDK changes are deployed by hand, never from CI.
+#
+# Why the previous version never merged anything (every run failed 2026-05..10):
+# - `gh pr review --approve` died with "GitHub Actions is not permitted to approve
+#   pull requests" (repo setting, intentionally off). main has no branch protection,
+#   so no approval is needed -- the step is gone rather than the setting loosened.
+# - `gh pr merge --auto` needs the repo's allow-auto-merge setting (off) and would
+#   have merged without any build check. The build gate below replaces it.
+
 on:
   pull_request:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
-  auto-merge:
-    runs-on: ubuntu-latest
+  verify:
+    # `npm ci` runs the updated packages' install scripts, so this job only ever
+    # holds a read-only token.
     if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
     steps:
-      - name: Approve PR
-        run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
-      - name: Auto-merge
-        run: gh pr merge --auto --squash "$PR_URL"
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run validate:html
+      - run: npm run validate:refs
+      # postbuild runs validate:dist, which fails on any asset the build didn't emit.
+      - run: npm run build
+
+  auto-merge:
+    needs: verify
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write   # dispatch deploy.yml
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+
+      - name: Merge minor/patch site updates
+        id: merge
+        if: >-
+          steps.metadata.outputs.directory == '/' &&
+          steps.metadata.outputs.update-type != 'version-update:semver-major'
         env:
+          GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # --match-head-commit: only merge the exact commit the verify job built.
+          gh pr merge "$PR_URL" --squash --delete-branch --match-head-commit "$HEAD_SHA"
+          echo "merged=true" >> "$GITHUB_OUTPUT"
+
+      - name: Report held updates
+        if: steps.merge.outcome == 'skipped'
+        env:
+          DIRECTORY: ${{ steps.metadata.outputs.directory }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+        run: |
+          echo "Not auto-merging (directory=$DIRECTORY, update-type=$UPDATE_TYPE): majors and /infrastructure updates need a human review."
+
+      - name: Trigger deploy
+        if: steps.merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GITHUB_TOKEN merges don't fire push events, so deploy.yml must be dispatched.
+          gh workflow run "Deploy to AWS" --repo "${{ github.repository }}" --ref main
+          echo "Deploy workflow dispatched"
