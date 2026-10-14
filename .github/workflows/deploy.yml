@@ -16,6 +16,12 @@ on:
 permissions:
   contents: read
 
+# Merges dispatch a deploy each; overlapping `s3 sync --delete` runs could leave an
+# older build live or delete assets the other run's index.html references.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-1
   S3_BUCKET: cassiecayphotography.com-site-content

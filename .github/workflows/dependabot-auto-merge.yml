@@ -1,10 +1,10 @@
 name: Dependabot Auto-Merge
 
-# Merges Dependabot minor/patch updates for the site (root npm + GitHub Actions)
+# Merges Dependabot patch/minor updates for the site (root npm + GitHub Actions)
 # once the same validate + build steps deploy.yml runs have passed, then dispatches
-# the deploy. Majors and /infrastructure updates are left open for a human: majors
-# are deliberately kept out of the dependabot.yml groups so they get reviewed, and
-# CDK changes are deployed by hand, never from CI.
+# the deploy. Majors (incl. 0.x minors) and /infrastructure updates are left open
+# for a human: majors are deliberately kept out of the dependabot.yml groups so they
+# get reviewed, and CDK changes are deployed by hand, never from CI.
 #
 # Why the previous version never merged anything (every run failed 2026-05..10):
 # - `gh pr review --approve` died with "GitHub Actions is not permitted to approve
@@ -58,11 +58,40 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
 
-      - name: Merge minor/patch site updates
+      - name: Decide whether to merge
+        id: decide
+        env:
+          DIRECTORY: ${{ steps.metadata.outputs.directory }}
+          UPDATED_DEPS: ${{ steps.metadata.outputs.updated-dependencies-json }}
+        run: |
+          # Allow-list per dependency: patch, or minor from a >=1.0 version. A 0.x
+          # minor (e.g. sharp 0.34 -> 0.35) is breaking under semver but fetch-metadata
+          # reports it as semver-minor; an unknown type or version is held too.
+          held=$(jq -r '[.[]
+              | select(
+                  (.updateType == "version-update:semver-patch") or
+                  (.updateType == "version-update:semver-minor" and
+                    (.prevVersion | test("^v?[1-9]")))
+                | not)
+              | "\(.dependencyName) \(.prevVersion) -> \(.newVersion) (\(.updateType))"]
+            | join("; ")' <<< "$UPDATED_DEPS")
+
+          if [ "$DIRECTORY" != "/" ]; then
+            echo "Holding: $DIRECTORY updates are deployed by hand (CDK), not auto-merged."
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          elif [ "$(jq 'length' <<< "$UPDATED_DEPS")" -eq 0 ]; then
+            echo "Holding: no updated-dependencies metadata to judge the update."
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          elif [ -n "$held" ]; then
+            echo "Holding for human review: $held"
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Merge
         id: merge
-        if: >-
-          steps.metadata.outputs.directory == '/' &&
-          steps.metadata.outputs.update-type != 'version-update:semver-major'
+        if: steps.decide.outputs.merge == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
@@ -71,14 +100,6 @@ jobs:
           # --match-head-commit: only merge the exact commit the verify job built.
           gh pr merge "$PR_URL" --squash --delete-branch --match-head-commit "$HEAD_SHA"
           echo "merged=true" >> "$GITHUB_OUTPUT"
-
-      - name: Report held updates
-        if: steps.merge.outcome == 'skipped'
-        env:
-          DIRECTORY: ${{ steps.metadata.outputs.directory }}
-          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
-        run: |
-          echo "Not auto-merging (directory=$DIRECTORY, update-type=$UPDATE_TYPE): majors and /infrastructure updates need a human review."
 
       - name: Trigger deploy
         if: steps.merge.outputs.merged == 'true'
