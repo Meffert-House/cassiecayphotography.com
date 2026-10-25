@@ -3039,6 +3039,9 @@ figure.overlay img {
     background-color: #fff;
     position: absolute;
     z-index: 5;
+    /* The "+" sits above the lightbox link (z-index 3); without this, clicks and
+       taps on the tile centre hit the figure and the lightbox never opens. */
+    pointer-events: none;
     top: 50%;
     left: 50%;
     opacity: 0;

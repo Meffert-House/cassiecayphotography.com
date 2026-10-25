@@ -16,13 +16,21 @@ on:
 permissions:
   contents: read
 
+# Merges dispatch a deploy each; overlapping `s3 sync --delete` runs could leave an
+# older build live or delete assets the other run's index.html references.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-1
   S3_BUCKET: cassiecayphotography.com-site-content
 
+# Pinned to ubuntu-26.04 rather than ubuntu-latest so the image only changes on a
+# reviewed edit (ubuntu-latest moves to 26.04 during 2026-10-19 -- 2026-11-19).
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       performance: ${{ steps.lighthouse-scores.outputs.performance }}
       accessibility: ${{ steps.lighthouse-scores.outputs.accessibility }}
@@ -56,7 +64,7 @@ jobs:
         run: npm run build
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v4
         with:
           name: dist
           path: dist/
@@ -111,7 +119,7 @@ jobs:
 
   deploy:
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: production
     permissions:
       id-token: write   # assume the AWS deploy role via OIDC
@@ -119,13 +127,13 @@ jobs:
 
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v4
         with:
           name: dist
           path: dist/
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: arn:aws:iam::241654197557:role/CassiePhotoGitHubActionsDeploymentRole
           aws-region: ${{ env.AWS_REGION }}
@@ -199,7 +207,7 @@ jobs:
             --paths "/*"
 
   notify-failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [validate, deploy]
     if: always() && (needs.validate.result == 'failure' || needs.deploy.result == 'failure')
     permissions:
@@ -208,7 +216,7 @@ jobs:
 
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: arn:aws:iam::241654197557:role/CassiePhotoGitHubActionsDeploymentRole
           aws-region: us-east-1
