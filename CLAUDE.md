@@ -5,18 +5,36 @@ Photography portfolio site for Cassie Cay Photography (Cassie Meffert). Single-p
 ## Commands
 
 ```bash
-npm ci                    # Install dependencies (use this, not npm install)
-npm run build             # Build with Vite (outputs to dist/)
-npm run validate:html     # Validate HTML structure
-npm run validate:refs     # Check source references resolve in the source tree
-npm run validate:dist     # Check built dist/ pages reference no missing assets (runs in postbuild)
-npm run validate:images   # Check image sizes (non-blocking)
-npm run dev               # Local dev server
+npm ci                     # Install dependencies (use this, not npm install)
+npm run dev                # Local dev server (localhost:3000)
+npm run build              # prebuild (image optimization) -> vite build -> postbuild (sitemap + dist validation)
+npm run preview             # Serve the built dist/ locally
+npm run validate:html      # HTML structural validation (dup IDs, malformed attrs)
+npm run validate:refs      # Check source references resolve in the source tree
+npm run validate:dist      # Check built dist/ pages reference no missing assets (runs in postbuild)
+npm run validate:images    # Check image sizes (non-blocking)
+npm run validate:staged    # Combined HTML + reference validation with friendly errors (runs pre-commit via husky)
 ```
 
 There is no test framework. The validation scripts above serve as the test suite. Always run `npm ci && npm run build && npm run validate:html && npm run validate:refs` before opening PRs.
 
 `validate:dist` runs automatically after every `npm run build` (via `postbuild`) and fails the build if a built page references a script/stylesheet/image that the build did not emit -- the guard added after a `vite-plugin-static-copy` major bump silently double-nested asset paths and 404'd the entire JS layer in production. `validate:refs` (source-level) cannot catch that class of bug; `validate:dist` (output-level) can.
+
+`npm run build` also runs `prebuild` (`scripts/optimize-images.js`) first, so a full build re-derives `images-optimized/` from `images/` every time -- expect it to take a while if source images changed.
+
+## Architecture
+
+**Single HTML entry point.** `index.html` is the entire site -- all sections (hero, portfolio, services, about, contact, etc.) live in one file, no client-side routing or templating. `404.html` is the only other page. Both are declared as separate Rollup inputs in `vite.config.js`.
+
+**Styling is not run through PostCSS by Vite's normal pipeline.** `style/style.css` is a large, hand-authored stylesheet (Bootstrap + custom rules) copied to `dist/` as a static asset via `vite-plugin-static-copy`, *not* imported/bundled by Vite. `postcss.config.js` (PurgeCSS + autoprefixer + cssnano) exists for a separate optimization pass -- when touching CSS, check whether that pass needs re-running/re-verifying, since PurgeCSS's safelist is the only thing keeping JS-toggled classes (Bootstrap offcanvas/modal, Muuri grid, GLightbox, Embla) from being stripped.
+
+**Vendor JS is external, not bundled.** Bootstrap, Embla Carousel, GLightbox, and Muuri (`style/js/*.js`) are marked `external` in Rollup config and copied as static files, loaded via `<script>` tags in `index.html`. Only `style/js/custom-scripts.js` is site-specific logic, and it gets a content-hash query string (`?v=<md5>`) injected at build time by the `cacheBustStaticScripts` Vite plugin in `vite.config.js`, since it's served as a static file rather than a fingerprinted bundle.
+
+**Image pipeline is a build-time, source-controlled transform, not a CMS.** `scripts/optimize-images.js` reads `images/` (originals) and generates `images-optimized/` with AVIF/WebP/JPEG variants at `full/1800w/1200w/800w` widths -- this runs as `prebuild` locally and also as the separate `process-images.yml` GitHub Actions workflow when new photos are pushed. `images-optimized/` is what actually ships (copied wholesale via static-copy); `images/` originals are *not* deployed. New photos are dropped in `new-photos/{hero,portfolio,services}/` for processing -- see `EDITING-GUIDE.md` for the non-technical workflow Cassie follows.
+
+**Design system source of truth lives outside the code.** `PRODUCT.md` (strategy/brand) and `DESIGN.md` (colors, typography, components) define the visual system; `DESIGN.json` is a structured/machine-readable export of the same tokens. Read `PRODUCT.md` and `DESIGN.md` before any visual change.
+
+**Pre-commit validation is layered for a non-technical maintainer.** `.husky/pre-commit` runs `validate:staged`, which combines HTML structural validation and reference checking with plain-language error output, since Cassie (the site owner) edits `index.html` directly through GitHub's web UI as described in `EDITING-GUIDE.md`.
 
 ## Key Conventions
 
