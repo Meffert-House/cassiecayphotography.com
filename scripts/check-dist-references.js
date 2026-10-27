@@ -15,6 +15,11 @@
  *   (carousel, lightbox, masonry and scroll-to-top all dead). This check closes
  *   that gap: it runs against the real built output and fails the build if any
  *   referenced asset is missing.
+ *
+ * It also checks internal links (<a href>) on the built pages, so an edit that
+ * breaks navigation never reaches S3: a local link must resolve to a file in
+ * dist/ ("/" and "dir/" mean the index.html there), and a same-page "#section"
+ * link must name an element id that exists on that page.
  */
 
 import { parse } from 'node-html-parser';
@@ -60,7 +65,8 @@ function resolveDistPath(ref) {
   const clean = ref.split('#')[0].split('?')[0].trim();
   if (!clean) return null;
   const relative = clean.startsWith('/') ? clean.slice(1) : clean;
-  return resolve(distRoot, relative);
+  // "/" or "dir/" is the index.html in that directory.
+  return resolve(distRoot, relative === '' || relative.endsWith('/') ? `${relative}index.html` : relative);
 }
 
 function parseSrcset(srcset) {
@@ -98,7 +104,23 @@ function extractReferences(html) {
   // Template background-image hook used across this theme.
   for (const el of root.querySelectorAll('[data-image-src]')) push('data-image-src', el.getAttribute('data-image-src'));
 
+  // Internal links: other pages, lightbox full-size images, downloads.
+  for (const a of root.querySelectorAll('a[href]')) push('a href', a.getAttribute('href'));
+
   return refs;
+}
+
+// Same-page "#section" links whose target id is not on the page. A bare "#" is a
+// script hook (no target), so it is allowed.
+function brokenAnchors(root) {
+  const ids = new Set(root.querySelectorAll('[id]').map(el => el.getAttribute('id')));
+  for (const el of root.querySelectorAll('a[name]')) ids.add(el.getAttribute('name'));
+  const broken = [];
+  for (const a of root.querySelectorAll('a[href^="#"]')) {
+    const frag = decodeURIComponent(a.getAttribute('href').slice(1));
+    if (frag && !ids.has(frag)) broken.push({ type: 'a href (anchor)', path: `#${frag}` });
+  }
+  return broken;
 }
 
 function checkPage(page) {
@@ -114,7 +136,7 @@ function checkPage(page) {
   const html = readFileSync(htmlPath, 'utf-8');
   const refs = extractReferences(html);
   const seen = new Set();
-  const missing = [];
+  const missing = brokenAnchors(parse(html));
 
   for (const ref of refs) {
     if (isExternalOrInline(ref.path)) continue;
@@ -162,9 +184,10 @@ function main() {
 
   if (fatal || totalMissing > 0) {
     console.error(
-      `Built-output reference check FAILED: ${totalMissing} missing asset(s). ` +
-        `The build produced a dist that references files it did not emit — ` +
-        `these would 404 in production. Check vite.config.js static-copy dest paths.`
+      `Built-output reference check FAILED: ${totalMissing} missing asset(s) or link(s). ` +
+        `The build produced a dist that references files it did not emit, or links ` +
+        `to a #section that is not on the page — these would break in production. ` +
+        `Check vite.config.js static-copy dest paths and the page's links/ids.`
     );
     process.exit(1);
   }
