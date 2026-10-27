@@ -26,6 +26,11 @@ env:
   AWS_REGION: us-east-1
   S3_BUCKET: cassiecayphotography.com-site-content
 
+# Pre-publish gate: `deploy` needs `validate`, whose "Build site" step runs postbuild ->
+# validate:dist (scripts/check-dist-references.js): every asset, internal page link and
+# #section link on the built pages must resolve, or nothing is published. Cassie's Mac pushes
+# her saved edits straight to main (family-git-sync in MeffertHouse-Infrastructure).
+#
 # Pinned to ubuntu-26.04 rather than ubuntu-latest so the image only changes on a
 # reviewed edit (ubuntu-latest moves to 26.04 during 2026-10-19 -- 2026-11-19).
 jobs:
@@ -60,7 +65,7 @@ jobs:
         run: npm run validate:images
         continue-on-error: true
 
-      - name: Build site
+      - name: Build site (also checks assets and internal links: validate:dist)
         run: npm run build
 
       - name: Upload build artifacts
