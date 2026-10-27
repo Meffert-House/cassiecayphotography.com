@@ -65,7 +65,7 @@ jobs:
         run: npm run validate:images
         continue-on-error: true
 
-      - name: Build site (also checks assets and internal links: validate:dist)
+      - name: Build site (also checks assets and internal links via validate:dist)
         run: npm run build
 
       - name: Upload build artifacts
