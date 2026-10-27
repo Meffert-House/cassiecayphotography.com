@@ -46,15 +46,9 @@ const ASSET_LINK_RELS = new Set([
 ]);
 
 function isExternalOrInline(path) {
-  return (
-    /^(https?:)?\/\//.test(path) || // http(s):// or protocol-relative //
-    path.startsWith('#') ||
-    path.startsWith('data:') ||
-    path.startsWith('mailto:') ||
-    path.startsWith('tel:') ||
-    path.startsWith('javascript:') ||
-    path.startsWith('blob:')
-  );
+  // Any URL scheme (https:, mailto:, tel:, sms:, data:, ...; case-insensitive) or
+  // protocol-relative //host is not a dist file; neither is a same-page #fragment.
+  return /^[a-z][a-z0-9+.-]*:/i.test(path) || path.startsWith('//') || path.startsWith('#');
 }
 
 /**
@@ -64,7 +58,12 @@ function isExternalOrInline(path) {
 function resolveDistPath(ref) {
   const clean = ref.split('#')[0].split('?')[0].trim();
   if (!clean) return null;
-  const relative = clean.startsWith('/') ? clean.slice(1) : clean;
+  let relative = clean.startsWith('/') ? clean.slice(1) : clean;
+  try {
+    relative = decodeURIComponent(relative); // "my%20photo.jpg" is the file "my photo.jpg"
+  } catch {
+    return null; // malformed %-escape: reported as missing
+  }
   // "/" or "dir/" is the index.html in that directory.
   return resolve(distRoot, relative === '' || relative.endsWith('/') ? `${relative}index.html` : relative);
 }
@@ -117,7 +116,12 @@ function brokenAnchors(root) {
   for (const el of root.querySelectorAll('a[name]')) ids.add(el.getAttribute('name'));
   const broken = [];
   for (const a of root.querySelectorAll('a[href^="#"]')) {
-    const frag = decodeURIComponent(a.getAttribute('href').slice(1));
+    let frag = a.getAttribute('href').slice(1);
+    try {
+      frag = decodeURIComponent(frag);
+    } catch {
+      // malformed %-escape: compare it as written (reported if no id matches)
+    }
     if (frag && !ids.has(frag)) broken.push({ type: 'a href (anchor)', path: `#${frag}` });
   }
   return broken;
