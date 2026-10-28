@@ -20,6 +20,7 @@
     "validate:dist": "node scripts/check-dist-references.js",
     "validate:images": "node scripts/check-image-sizes.js",
     "validate:staged": "node scripts/validate-staged.js",
+    "test": "node --test scripts/check-dist-references.test.js",
     "prepare": "husky"
   },
   "repository": {
