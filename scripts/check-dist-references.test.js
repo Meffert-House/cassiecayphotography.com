@@ -87,3 +87,13 @@ test('a missing linked page still fails', () => {
   assert.equal(r.status, 1, r.output);
   assert.match(r.output, /MISSING: gone\.html#x/);
 });
+
+test('a link to a directory without a trailing slash fails (no file there)', () => {
+  const r = runChecker({ 'dist/index.html': page('<a href="images">x</a>'), 'dist/images/a.jpg': 'x' });
+  assert.equal(r.status, 1, r.output);
+});
+
+test('backslash host forms point at another host, not at dist/', () => {
+  const r = runChecker({ 'dist/index.html': page('<img src="\\\\cdn.example/x.jpg"><img src="/\\cdn.example/y.jpg">') });
+  assert.equal(r.status, 0, r.output);
+});

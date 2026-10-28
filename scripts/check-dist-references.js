@@ -29,7 +29,7 @@
  */
 
 import { parse } from 'node-html-parser';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, statSync } from 'fs';
 import { resolve, sep } from 'path';
 
 const projectRoot = process.cwd();
@@ -72,6 +72,8 @@ function resolveDistRef(ref, page) {
   } catch {
     return null; // unparseable URL: reported as missing
   }
+  // "\\host/x" and "/\\host/x" are another host to a browser: not a dist file.
+  if (url.origin !== new URL(SITE).origin) return { external: true };
   let relative;
   try {
     relative = decodeURIComponent(url.pathname.slice(1)); // "my%20photo.jpg" is the file "my photo.jpg"
@@ -183,7 +185,9 @@ function checkPage(page) {
     seen.add(key);
 
     const target = resolveDistRef(ref.path, page);
-    if (!target || !existsSync(target.file)) {
+    if (target && target.external) continue;
+    // Must be a file: S3 serves no directory listing for "dir" without a trailing slash.
+    if (!target || !existsSync(target.file) || !statSync(target.file).isFile()) {
       missing.push(ref);
       continue;
     }
