@@ -43,7 +43,7 @@
     "glob": "^13.0.6",
     "html-validate": "^11.16.2",
     "husky": "^9.1.7",
-    "node-html-parser": "^7.1.0",
+    "node-html-parser": "^9.0.4",
     "p-limit": "^7.3.0",
     "postcss": "^8.5.8",
     "sharp": "^0.35.5",
