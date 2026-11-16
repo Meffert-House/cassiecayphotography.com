@@ -168,9 +168,20 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Close offcanvas when navigation link is clicked
+        // Bootstrap restores focus to the menu button when the drawer closes.
+        // Follow the anchor after that focus restoration, or it can scroll the
+        // visitor back to the menu (especially with reduced motion enabled).
         offcanvasEl.querySelectorAll('.nav-link').forEach(function(link) {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', function(event) {
+                var hash = link.getAttribute('href');
+                var target = hash && hash.charAt(0) === '#' ? document.getElementById(hash.slice(1)) : null;
+                if (target && event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
+                    event.preventDefault();
+                    offcanvasEl.addEventListener('hidden.bs.offcanvas', function() {
+                        if (window.location.hash !== hash) window.history.pushState(null, '', hash);
+                        target.scrollIntoView({ behavior: prefersReducedMotion ? 'instant' : 'smooth' });
+                    }, { once: true });
+                }
                 offcanvasInstance.hide();
             });
         });
