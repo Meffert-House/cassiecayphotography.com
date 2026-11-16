@@ -117,25 +117,25 @@
 <meta name="description" content="Bright, natural-light family, newborn & senior photography in Waunakee & Madison, WI. See the gallery and book your session with Cassie Cay Photography.">
 <meta name="author" content="Cassie Meffert">
 <meta name="theme-color" content="#181818">
-<meta property="og:title" content="Cassie Cay Photography">
+<meta property="og:title" content="Madison &amp; Waunakee Photographer | Cassie Cay Photography">
 <meta property="og:site_name" content="Cassie Cay Photography">
 <meta property="og:locale" content="en_US">
-<meta property="og:description" content="Professional photographer in Madison, Wisconsin specializing in family, newborn, senior, milestone, and event photography.">
+<meta property="og:description" content="Bright, natural-light family, newborn &amp; senior photography in Waunakee &amp; Madison, WI. See the gallery and book your session with Cassie Cay Photography.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://cassiecayphotography.com/">
 <meta property="og:image" content="https://cassiecayphotography.com/images-optimized/jpeg/full/cassiecay-background1.jpg">
 <meta property="og:image:width" content="2000">
 <meta property="og:image:height" content="1333">
-<meta property="og:image:alt" content="Cassie Cay Photography - Madison Wisconsin photographer specializing in family and event photography">
+<meta property="og:image:alt" content="Pink blossoms photographed by Cassie Cay Photography">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Cassie Cay Photography | Madison, WI Professional Photographer">
-<meta name="twitter:description" content="Professional photographer in Madison, Wisconsin specializing in family, newborn, senior, milestone, and event photography.">
+<meta name="twitter:title" content="Madison &amp; Waunakee Photographer | Cassie Cay Photography">
+<meta name="twitter:description" content="Bright, natural-light family, newborn &amp; senior photography in Waunakee &amp; Madison, WI. See the gallery and book your session with Cassie Cay Photography.">
 <meta name="twitter:image" content="https://cassiecayphotography.com/images-optimized/jpeg/full/cassiecay-background1.jpg">
-<meta name="twitter:image:alt" content="Cassie Cay Photography - Madison Wisconsin photographer specializing in family and event photography">
+<meta name="twitter:image:alt" content="Pink blossoms photographed by Cassie Cay Photography">
 <link rel="canonical" href="https://cassiecayphotography.com/">
 <link rel="shortcut icon" href="images/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<title>Cassie Cay Photography | Madison, WI Professional Photographer</title>
+<title>Madison &amp; Waunakee Photographer | Cassie Cay Photography</title>
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 <link rel="stylesheet" type="text/css" href="style/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="style/css/hero-slider.css">
@@ -166,23 +166,16 @@
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "additionalType": "https://schema.org/Photographer",
   "name": "Cassie Cay Photography",
-  "description": "Professional photographer in Madison, Wisconsin specializing in family, newborn, senior, milestone, and event photography.",
-  "url": "https://cassiecayphotography.com",
+  "description": "Photography by Cassie Meffert in Waunakee and the Madison, Wisconsin area, including family, newborn, senior, milestone, engagement, wedding and event sessions.",
+  "url": "https://cassiecayphotography.com/",
   "email": "cassiecayphoto@gmail.com",
   "image": "https://cassiecayphotography.com/images-optimized/webp/full/cassiecaylogobw2.webp",
-  "priceRange": "$$",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Waunakee",
     "addressRegion": "WI",
     "addressCountry": "US"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 43.1919,
-    "longitude": -89.4557
   },
   "areaServed": [
     {
@@ -213,7 +206,8 @@
   "sameAs": [
     "https://www.facebook.com/cassie.cay.photography",
     "https://www.instagram.com/cassie.cay.photography"
-  ]
+  ],
+  "@id": "https://cassiecayphotography.com/#business"
 }
 </script>
 <script type="application/ld+json">
@@ -268,90 +262,93 @@
   "@type": "Service",
   "serviceType": "Photography Services",
   "provider": {
-    "@type": "LocalBusiness",
-    "name": "Cassie Cay Photography",
-    "url": "https://cassiecayphotography.com"
+    "@id": "https://cassiecayphotography.com/#business"
   },
-  "areaServed": {
-    "@type": "GeoCircle",
-    "geoMidpoint": {
-      "@type": "GeoCoordinates",
-      "latitude": 43.0731,
-      "longitude": -89.4012
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Madison",
+      "containedInPlace": {
+        "@type": "State",
+        "name": "Wisconsin"
+      }
     },
-    "geoRadius": "80467"
-  },
+    {
+      "@type": "City",
+      "name": "Waunakee",
+      "containedInPlace": {
+        "@type": "State",
+        "name": "Wisconsin"
+      }
+    }
+  ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
     "name": "Photography Sessions",
     "itemListElement": [
       {
         "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Full Session",
+          "description": "A 45-60 minute session with 70+ high-resolution digital images with print release, for engagement, family, maternity, milestone or cake smash photos. Extended family sessions incur extra fees."
+        },
         "price": "350.00",
-        "priceCurrency": "USD",
+        "priceCurrency": "USD"
+      },
+      {
+        "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Family Photography Session",
-          "description": "Professional family portrait photography in Madison, Waunakee, and surrounding Wisconsin areas. Outdoor and studio sessions available."
+          "name": "Wedding, Event",
+          "description": "Hourly photography for weddings, birthday parties, bat or bar mitzvahs, or professional events."
+        },
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "350.00",
+          "priceCurrency": "USD",
+          "unitCode": "HUR"
         }
       },
       {
         "@type": "Offer",
-        "price": "450.00",
-        "priceCurrency": "USD",
         "itemOffered": {
           "@type": "Service",
-          "name": "Newborn Photography Session",
-          "description": "In-home or studio newborn portrait photography capturing your baby's first days. Serving Madison and Dane County."
-        }
+          "name": "Compact Session",
+          "description": "A 25 minute session with 35+ high-resolution digital images with print release. Location is determined by the photographer."
+        },
+        "price": "250.00",
+        "priceCurrency": "USD"
       },
       {
         "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Senior",
+          "description": "A 60-90 minute senior portrait session with 70+ high-resolution digital images with print release, unlimited outfit changes within the session time and up to 2 locations."
+        },
         "price": "400.00",
-        "priceCurrency": "USD",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Senior Portrait Session",
-          "description": "High school senior portrait photography in Madison, Wisconsin. Indoor and outdoor locations available."
-        }
+        "priceCurrency": "USD"
       },
       {
         "@type": "Offer",
-        "price": "350.00",
-        "priceCurrency": "USD",
         "itemOffered": {
           "@type": "Service",
-          "name": "Milestone Photography Session",
-          "description": "Baby milestone and first birthday photography sessions. Capture every precious moment as your child grows."
-        }
-      },
-      {
-        "@type": "Offer",
-        "priceSpecification": {
-          "@type": "UnitPriceSpecification",
-          "price": "350.00",
-          "priceCurrency": "USD",
-          "unitCode": "HUR"
+          "name": "Fresh 48",
+          "description": "A 30 minute session with 35+ digital images, in the hospital within 48 hours of birth."
         },
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Wedding Photography",
-          "description": "Wedding and engagement photography coverage in Madison, Wisconsin and surrounding areas."
-        }
+        "price": "300.00",
+        "priceCurrency": "USD"
       },
       {
         "@type": "Offer",
-        "priceSpecification": {
-          "@type": "UnitPriceSpecification",
-          "price": "350.00",
-          "priceCurrency": "USD",
-          "unitCode": "HUR"
-        },
         "itemOffered": {
           "@type": "Service",
-          "name": "Event Photography",
-          "description": "Professional event photography for corporate events, parties, and special occasions in the Madison area."
-        }
+          "name": "Newborn",
+          "description": "A 1-3 hour lifestyle session with 70+ high-resolution digital images with print release, generally in your home or outdoors. Immediate family can be included, generally with one posed setup. Please inquire about final pricing for only posed photos."
+        },
+        "price": "450.00",
+        "priceCurrency": "USD"
       }
     ]
   }
@@ -416,14 +413,14 @@
             <picture>
               <source srcset="images-optimized/avif/800w/cassiecay-slider7.avif 800w, images-optimized/avif/1200w/cassiecay-slider7.avif 1200w, images-optimized/avif/1800w/cassiecay-slider7.avif 1800w, images-optimized/avif/full/cassiecay-slider7.avif 2000w" sizes="100vw" type="image/avif">
               <source srcset="images-optimized/webp/800w/cassiecay-slider7.webp 800w, images-optimized/webp/1200w/cassiecay-slider7.webp 1200w, images-optimized/webp/1800w/cassiecay-slider7.webp 1800w, images-optimized/webp/full/cassiecay-slider7.webp 2000w" sizes="100vw" type="image/webp">
-              <img src="images-optimized/jpeg/full/cassiecay-slider7.jpg" srcset="images-optimized/jpeg/800w/cassiecay-slider7.jpg 800w, images-optimized/jpeg/1200w/cassiecay-slider7.jpg 1200w, images-optimized/jpeg/1800w/cassiecay-slider7.jpg 1800w, images-optimized/jpeg/full/cassiecay-slider7.jpg 2000w" sizes="100vw" width="2000" height="1333" alt="Professional family portrait photography session in Madison, Wisconsin" fetchpriority="high">
+              <img src="images-optimized/jpeg/full/cassiecay-slider7.jpg" srcset="images-optimized/jpeg/800w/cassiecay-slider7.jpg 800w, images-optimized/jpeg/1200w/cassiecay-slider7.jpg 1200w, images-optimized/jpeg/1800w/cassiecay-slider7.jpg 1800w, images-optimized/jpeg/full/cassiecay-slider7.jpg 2000w" sizes="100vw" width="2000" height="1333" alt="Black and white maternity portrait with hands resting on an expectant mother’s belly" fetchpriority="high">
             </picture>
           </div>
           <div class="embla__slide">
             <picture>
               <source srcset="images-optimized/avif/800w/cassiecay-slider2.avif 800w, images-optimized/avif/1200w/cassiecay-slider2.avif 1200w, images-optimized/avif/1800w/cassiecay-slider2.avif 1800w, images-optimized/avif/full/cassiecay-slider2.avif 2000w" sizes="100vw" type="image/avif">
               <source srcset="images-optimized/webp/800w/cassiecay-slider2.webp 800w, images-optimized/webp/1200w/cassiecay-slider2.webp 1200w, images-optimized/webp/1800w/cassiecay-slider2.webp 1800w, images-optimized/webp/full/cassiecay-slider2.webp 2000w" sizes="100vw" type="image/webp">
-              <img src="images-optimized/jpeg/full/cassiecay-slider2.jpg" srcset="images-optimized/jpeg/800w/cassiecay-slider2.jpg 800w, images-optimized/jpeg/1200w/cassiecay-slider2.jpg 1200w, images-optimized/jpeg/1800w/cassiecay-slider2.jpg 1800w, images-optimized/jpeg/full/cassiecay-slider2.jpg 2000w" sizes="100vw" width="2000" height="1325" alt="Outdoor portrait photography by Cassie Cay Photography" loading="lazy">
+              <img src="images-optimized/jpeg/full/cassiecay-slider2.jpg" srcset="images-optimized/jpeg/800w/cassiecay-slider2.jpg 800w, images-optimized/jpeg/1200w/cassiecay-slider2.jpg 1200w, images-optimized/jpeg/1800w/cassiecay-slider2.jpg 1800w, images-optimized/jpeg/full/cassiecay-slider2.jpg 2000w" sizes="100vw" width="2000" height="1325" alt="Baby in a mustard outfit lying beside flowers" loading="lazy">
             </picture>
           </div>
         </div>
@@ -1707,6 +1704,7 @@
         <div class="row">
           <div class="col-lg-10 offset-lg-1">
             <h2 class="section-title section-title-upper text-center">My Services</h2>
+            <p class="text-center">Based in Waunakee, I offer family, newborn, senior, maternity, engagement and milestone photography in the Madison, Wisconsin area, as well as wedding and event coverage. Explore the sessions below and <a href="#contact">get in touch about availability</a>.</p>
             <p class="text-center">Please contact me for bundle deals. You can also take advantage of a 10% discount when you book a second session within 6 months of a full price session. This discount is not applicable to seasonal mini sessions. <br><br> </p>
             <div class="space40"></div>
             <!-- [SERVICE:Full-Session] -->
@@ -1715,7 +1713,7 @@
                 <figure><picture>
                   <source srcset="images-optimized/avif/full/cassiecay-service1.avif" type="image/avif">
                   <source srcset="images-optimized/webp/full/cassiecay-service1.webp" type="image/webp">
-                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service1.jpg" width="500" height="500" loading="lazy" alt="Family photography session">
+                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service1.jpg" width="500" height="500" loading="lazy" alt="Couple during an outdoor proposal">
                 </picture></figure>
               </div>
               <!--/column -->
@@ -1736,7 +1734,7 @@
                 <figure><picture>
                   <source srcset="images-optimized/avif/full/cassiecay-service-wedding.avif" type="image/avif">
                   <source srcset="images-optimized/webp/full/cassiecay-service-wedding.webp" type="image/webp">
-                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service-wedding.jpg" width="500" height="500" loading="lazy" alt="Wedding and event photography">
+                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service-wedding.jpg" width="500" height="500" loading="lazy" alt="Newlyweds dancing together outdoors">
                 </picture></figure>
               </div>
               <!--/column -->
@@ -1757,7 +1755,7 @@
                 <figure><picture>
                   <source srcset="images-optimized/avif/full/cassiecay-service3.avif" type="image/avif">
                   <source srcset="images-optimized/webp/full/cassiecay-service3.webp" type="image/webp">
-                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service3.jpg" width="500" height="500" loading="lazy" alt="Senior portrait photography">
+                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service3.jpg" width="500" height="500" loading="lazy" alt="Father holding a baby in a field">
                 </picture></figure>
               </div>
               <!--/column -->
@@ -1778,7 +1776,7 @@
                 <figure><picture>
                   <source srcset="images-optimized/avif/full/cassiecay-service4.avif" type="image/avif">
                   <source srcset="images-optimized/webp/full/cassiecay-service4.webp" type="image/webp">
-                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service4.jpg" width="500" height="500" loading="lazy" alt="Milestone photography session">
+                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service4.jpg" width="500" height="500" loading="lazy" alt="Senior portrait beside a wooden fence">
                 </picture></figure>
               </div>
               <!--/column -->
@@ -1799,7 +1797,7 @@
                 <figure><picture>
                   <source srcset="images-optimized/avif/full/cassiecay-service6.avif" type="image/avif">
                   <source srcset="images-optimized/webp/full/cassiecay-service6.webp" type="image/webp">
-                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service6.jpg" width="500" height="500" loading="lazy" alt="Couples photography session">
+                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service6.jpg" width="500" height="500" loading="lazy" alt="Sleeping newborn wearing a green headband">
                 </picture></figure>
               </div>
               <!--/column -->
@@ -1820,7 +1818,7 @@
                 <figure><picture>
                   <source srcset="images-optimized/avif/full/cassiecay-service7.avif" type="image/avif">
                   <source srcset="images-optimized/webp/full/cassiecay-service7.webp" type="image/webp">
-                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service7.jpg" width="500" height="500" loading="lazy" alt="Event photography">
+                  <img class="octagon" src="images-optimized/jpeg/full/cassiecay-service7.jpg" width="500" height="500" loading="lazy" alt="Sleeping newborn with a blue bow wrapped in a pink blanket">
                 </picture></figure>
               </div>
               <!--/column -->
@@ -1880,7 +1878,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="name" class="visually-hidden">Your name</label>
-                      <input type="text" class="form-control" name="name" id="name" placeholder="Your name" required="required" minlength="2" autocomplete="name">
+                      <input type="text" class="form-control" name="name" id="name" placeholder="Your name" required="required" minlength="2" maxlength="100" autocomplete="name">
                     </div>
                     <!--/.form-group -->
                   </div>
@@ -1888,7 +1886,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="mail" class="visually-hidden">Your e-mail</label>
-                      <input type="email" class="form-control" name="mail" id="mail" placeholder="Your e-mail" required="required" autocomplete="email">
+                      <input type="email" class="form-control" name="mail" id="mail" placeholder="Your e-mail" required="required" maxlength="254" autocomplete="email">
                     </div>
                     <!--/.form-group -->
                   </div>
@@ -1896,14 +1894,14 @@
                   <div class="col-12">
                     <div class="form-group">
                       <label for="subject" class="visually-hidden">Subject</label>
-                      <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject">
+                      <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" maxlength="200">
                     </div>
                     <!--/.form-group -->
                   </div>
                   <!--/column -->
                   <div class="col-12">
                     <label for="comment" class="visually-hidden">Your message</label>
-                    <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Type your message here..." required></textarea>
+                    <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Type your message here..." minlength="10" maxlength="5000" required></textarea>
                     <button type="submit" id="submitmessage" class="btn mt-3">Send Message</button>
                     <p id="message" style="margin-top:10px;" role="status" aria-live="polite"></p>
                   </div>
