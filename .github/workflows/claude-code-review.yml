@@ -27,7 +27,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1
+      # The review is advisory and the action hides its own output, so a failure only
+      # ever said "is_error:true". continue-on-error lets the next step read the real
+      # error from the execution file and decide: an exhausted subscription quota
+      # (HTTP 429 usage_limit_reached) is a warning, anything else still fails the job.
+      - id: review
+        continue-on-error: true
+        uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1
         with:
           github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -35,3 +41,27 @@ jobs:
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
           prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+
+      - name: Report review failure
+        if: steps.review.outcome == 'failure'
+        env:
+          EXECUTION_FILE: ${{ steps.review.outputs.execution_file }}
+        run: |
+          f="${EXECUTION_FILE:-$RUNNER_TEMP/claude-execution-output.json}"
+          if [ ! -s "$f" ]; then
+            echo "::error title=Claude review failed::The action failed before Claude produced a result; see the step log above."
+            exit 1
+          fi
+          # Print only the final result's error fields, never the transcript the action hides.
+          # -s copes with both a JSON array and newline-delimited JSON.
+          res=$(jq -sc '[.. | objects | select(.type? == "result")] | last // {}' "$f")
+          api_error=$(jq -r '.api_error // empty' <<<"$res")
+          status=$(jq -r '.api_error_status // empty' <<<"$res")
+          msg=$(jq -r '.result // "no result text"' <<<"$res" | tr '\n' ' ' | cut -c1-300)
+          if [ "$api_error" = "usage_limit_reached" ]; then
+            echo "::warning title=Claude review skipped::Usage limit reached on the CLAUDE_CODE_OAUTH_TOKEN subscription: $msg"
+            printf '### Claude review skipped\nThe subscription behind `CLAUDE_CODE_OAUTH_TOKEN` hit its usage limit: %s\n' "$msg" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "::error title=Claude review failed::${api_error:-error}${status:+ (HTTP $status)}: $msg"
+          exit 1
