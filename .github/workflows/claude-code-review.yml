@@ -30,6 +30,39 @@ jobs:
       - uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1
         with:
           github_token: ${{ github.token }}
+          show_full_output: true
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "claude[bot],dependabot[bot]"
+          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+          plugins: 'code-review@claude-code-plugins'
+          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+
+  claude-review-v1-0-245:
+    # Dependabot-triggered runs only receive Dependabot secrets, so
+    # CLAUDE_CODE_OAUTH_TOKEN is empty and the review can only fail. Dependabot PRs
+    # are gated by the build in dependabot-auto-merge.yml instead.
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      # No id-token: the review authenticates to Anthropic via CLAUDE_CODE_OAUTH_TOKEN
+      # and must not be able to mint OIDC tokens (the AWS deploy role trusts the whole
+      # repo). But claude-code-action ALSO needs a GitHub credential; without id-token
+      # it can't do its OIDC-for-app-token exchange and every run died with "Unable to
+      # get ACTIONS_ID_TOKEN_REQUEST_URL". Passing github_token below supplies the
+      # GitHub credential explicitly so the action skips the OIDC exchange entirely.
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515 # v1.0.245 (diagnostic)
+        with:
+          github_token: ${{ github.token }}
+          show_full_output: true
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_bots: "claude[bot],dependabot[bot]"
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
